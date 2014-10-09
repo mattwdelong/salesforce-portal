@@ -1,0 +1,103 @@
+{% raw %}
+<script type="text/x-handlebars" data-template-name="person">
+<h2 class="sub-heading">{{model.FirstName}} {{model.LastName}}</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Details</h3></div>
+    <div class="panel-body">
+        <div class="col-lg-6">
+            <table class="layout">
+                <tr>
+                    <td class="layout-label">Home</td>
+                    <td>{{model.Phone}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Mobile</td>
+                    <td>{{model.MobilePhone}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Email</td>
+                    <td>{{model.Email}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-lg-6">
+            <table class="layout">
+                <tr>
+                    <td class="layout-label">Street</td>
+                    <td>{{model.MailingStreet}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">City</td>
+                    <td>{{model.MailingCity}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Postcode</td>
+                    <td>{{model.MailingPostalCode}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-lg-12"><hr /></div>
+        <div class="col-lg-6">
+            <table class="layout">
+                <tr>
+                    <td class="layout-label">Gender</td>
+                    <td>{{model.Gender__c}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Marital Status</td>
+                    <td>{{model.Marital_Status__c}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Salvation</td>
+                    <td>{{#if model.Salvation__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Baptised</td>
+                    <td>{{#if model.IsBaptised__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-lg-6">
+            <table class="layout">
+                <tr>
+                    <td class="layout-label">Type</td>
+                    <td>{{model.Contact_Type__c}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Territory</td>
+                    <td>{{model.RecordType.Name}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Partner</td>
+                    <td>{{#if model.Partner__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Key Leader</td>
+                    <td>{{#if model.isKeyLeader__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Small Groups</h3></div>
+    <div class="panel-body">       <div class="col-lg-12">
+            <table class="table">
+                <tr>
+                    <th>Name</th><th>Leader</th>
+                </tr>
+                <tr>
+                {{#each sg in model.small_groups.records}}
+                    <td>{{ sg.Life_Group__r.Name }}</td>
+                    <td>{{#if sg.Leader__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                {{/each}}
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+</script>
+{% endraw %}

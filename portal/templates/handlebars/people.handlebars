@@ -1,0 +1,40 @@
+{% raw %}
+<script type="text/x-handlebars" data-template-name="people">
+<h2 class="sub-heading">People</h2>
+
+<div class="col-xs-12 col-md-12 col-lg-12">
+    <div class="form-group info">
+        <p>Find</p>
+        <form role="form" {{action 'findPeople' on="submit"}}>
+            <div class="col-xs-6 col-md-6 col-lg-6">
+                {{input text="search" value=find_name placeholder="find name" class="form-control"}}
+            </div>
+            <div class="col-xs-6 col-md-6 col-lg-3">
+                <button {{action "findPeople"}} class="btn btn-primary" title="Find"><span class="glyphicon glyphicon-search"></span></button>
+                <button {{action "clearFind"}} class="btn btn-default" title="Clear"><span class="glyphicon glyphicon-remove-circle"></span></button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{#if model}}
+<table class="table">
+    <thead>
+        <tr>
+            <th>Firstname</th><th>Lastname</th><th>Type</th>
+        </tr>
+    </thead>
+    <tbody>
+{{#each person in model}}
+    <tr>
+        <td>{{#link-to 'person' person.Id}}{{person.FirstName}}{{/link-to}}</td>
+        <td>{{#link-to 'person' person.Id}}{{person.LastName}}{{/link-to}}</td>
+        <td>{{person.Contact_Type__c}}</td>
+    </tr>
+{{/each}}
+    </tbody>
+</table>
+{{/if}}
+
+</script>
+{% endraw %}
