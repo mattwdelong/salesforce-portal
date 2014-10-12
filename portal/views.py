@@ -34,8 +34,8 @@ def api_people_find():
 @app.route('/api/people/<contact_id>')
 def api_person_get(contact_id):
     sf = SFPerson()
-    contact, small_groups = sf.person_by_id(contact_id)
+    contact, small_groups, teams = sf.person_by_id(contact_id)
     contact['small_groups'] = small_groups
+    contact['team_serving'] = teams
 
-    app.logger.debug(contact)
     return jsonify(response="Success", person=contact)
