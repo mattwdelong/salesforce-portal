@@ -87,9 +87,9 @@
         <div class="col-lg-12">
                 {{#each sg in model.small_groups}}
                     {{#if sg.in_group}}
-                    <button class="btn btn-primary">{{ sg.group_name }}{{#if sg.leader}} <span class="badge">Leader</span>{{/if}}</button>
+                    <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.group_name }}{{#if sg.leader}} <span class="badge">Leader</span>{{/if}}</button>
                     {{else}}
-                    <button>{{ sg.group_name }}</button>
+                    <button {{action 'toggleSmallGroup' sg}}>{{ sg.group_name }}</button>
                     {{/if}}
                 {{/each}}
             </table>

@@ -48,6 +48,30 @@ App.PersonController = Ember.ObjectController.extend({
             }).catch(function(error) {
                 controller.set('error', error.message);
             });
-        }.observes('team_serving')
+        }.observes('team_serving'),
+
+        toggleSmallGroup: function(sg) {
+            // Toggle the small group membership
+            var groups = [];
+            var controller = this;
+
+            App.Person.updateSmallGroup(
+                this.get("model").Id, sg.group_id).then(function(data) {
+
+                sg.in_group = data.small_group.in_group;
+                sg.leader = data.small_group.leader;
+
+                controller.get("model").small_groups.forEach(function (t) {
+                    if (t.group_id==sg.group_id) {
+                        groups.push(sg);
+                    } else {
+                        groups.push(t);
+                    }
+                });
+                controller.get("model").small_groups.setObjects(groups);
+            }).catch(function(error) {
+                controller.set('error', error.message);
+            });
+        }.observes('small_groups')
     }
 });

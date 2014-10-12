@@ -153,7 +153,6 @@ class SFPerson(object):
         None => View => Contact-Only => Manage => ...
         """
         team = {
-            "team_id": contact_id,
             "in_team": True,
             "access_contact": False,
             "access_manage": False
@@ -200,3 +199,44 @@ class SFPerson(object):
             team["access"] = True
 
         return team
+
+    def person_small_group_update(self, contact_id, group_id):
+        """
+        Toggle the membership and access of the small group.
+        None => Member => Leader => ...
+        """
+        small_group = {
+            "in_group": True,
+            "leader": False,
+        }
+
+        # Get the current team membership
+        in_small_groups = self.connection.query("""
+              select Id, Name, Leader__c, Life_Group__r.Id
+              from ContactLifeGroup__c
+              where Life_Group__r.Active__c=true
+              and Contact__c='%s' and Life_Group__r.Id='%s'""" %
+                                                (contact_id, group_id))
+
+        if len(in_small_groups["records"]) > 0:
+            membership = in_small_groups["records"][0]
+            if membership["Leader__c"]:
+                # Remove membership
+                self.connection.ContactLifeGroup__c.delete(membership["Id"])
+                small_group["in_group"] = False
+            else:
+                # Make leader
+                sf_record = {"Leader__c": True}
+                self.connection.ContactLifeGroup__c.update(
+                    membership["Id"], sf_record)
+                small_group["leader"] = True
+        else:
+            # Add membership
+            sf_record = {
+                'Contact__c': contact_id,
+                'Life_Group__c': group_id,
+                "Leader__c": False,
+            }
+            self.connection.ContactLifeGroup__c.create(sf_record)
+
+        return small_group
