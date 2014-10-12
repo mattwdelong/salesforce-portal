@@ -103,9 +103,17 @@
         <div class="col-lg-12">
                 {{#each ts in model.team_serving}}
                     {{#if ts.in_team}}
-                    <button class="btn btn-primary">{{ ts.team_name }}</button>
+                        {{#if ts.access_manage}}
+                        <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Manage</span></button>
+                        {{else}}
+                            {{#if ts.access_contact}}
+                            <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Contact</span></button>
+                            {{else}}
+                                <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }}</button>
+                            {{/if}}
+                        {{/if}}
                     {{else}}
-                    <button>{{ ts.team_name }}</button>
+                    <button {{action 'toggleTeam' ts}}>{{ ts.team_name }}</button>
                     {{/if}}
                 {{/each}}
             </table>

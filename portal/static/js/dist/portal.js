@@ -32,6 +32,37 @@ App.Router.map(function() {
         }
     }
 });
+
+
+App.PersonController = Ember.ObjectController.extend({
+
+    actions: {
+        toggleTeam: function(team) {
+            // Toggle the team membership
+            var teams = [];
+            var controller = this;
+
+            App.Person.updateTeam(
+                this.get("model").Id, team.team_id).then(function(data) {
+                team.in_team = data.team.in_team;
+                team.access_manage =  data.team.access_manage;
+                team.access_contact =  data.team.access_contact;
+
+                // Update the view
+                controller.get("model").team_serving.forEach(function (t) {
+                    if (t.team_id==team.team_id) {
+                        teams.push(team);
+                    } else {
+                        teams.push(t);
+                    }
+                });
+                controller.get("model").team_serving.setObjects(teams);
+            }).catch(function(error) {
+                controller.set('error', error.message);
+            });
+        }.observes('team_serving')
+    }
+});
 ;
 // Ajax wrapper that returns a promise
 function ajax (url, options) {
@@ -88,7 +119,17 @@ App.Person.reopenClass({
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         });
+    },
+
+    updateTeam: function(contactId, teamId) {
+        return ajax(this.url + '/' + contactId + '/team/' + teamId, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
     }
+
 });
 ;App.IndexRoute = Ember.Route.extend({
   beforeModel: function() {

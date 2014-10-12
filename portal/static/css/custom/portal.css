@@ -37,12 +37,12 @@ h2, h3, h4 {
 .btn {
  	font-family: Roboto Condensed;
  	border-color: #13899D;
- 	color: white;
+ 	/*color: white;*/
 }
 
 .btn:hover {
  	background-color: #a5bfb2;
- 	color: white;
+ 	/*color: white;*/
 }
 
 .btn.active {

@@ -54,5 +54,15 @@ App.Person.reopenClass({
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         });
+    },
+
+    updateTeam: function(contactId, teamId) {
+        return ajax(this.url + '/' + contactId + '/team/' + teamId, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
     }
+
 });

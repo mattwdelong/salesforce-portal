@@ -39,3 +39,9 @@ def api_person_get(contact_id):
     contact['team_serving'] = teams
 
     return jsonify(response="Success", person=contact)
+
+@app.route('/api/people/<contact_id>/team/<team_id>', methods=['POST'])
+def api_person_team(contact_id, team_id):
+    sf = SFPerson()
+    team = sf.person_team_serving_update(contact_id, team_id)
+    return jsonify(response="Success", team=team)
