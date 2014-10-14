@@ -50,6 +50,10 @@ h2, h3, h4 {
  	box-shadow: none;
 }
 
+.btn-default .glyphicon {
+    color: #13899D;
+}
+
 button .glyphicon {
  	color: white;
 }

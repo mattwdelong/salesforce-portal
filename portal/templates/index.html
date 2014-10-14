@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
+<head>
     <title>Life Church Portal</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <link rel="apple-touch-icon" sizes="57x57" href="/static/images/favicons/apple-touch-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="114x114" href="/static/images/favicons/apple-touch-icon-114x114.png">
@@ -24,15 +21,18 @@
     <meta name="msapplication-TileColor" content="#2f9966">
     <meta name="msapplication-TileImage" content="/static/images/favicons/mstile-144x144.png">
     <meta name="application-name" content="Life Church Portal">
-
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300' rel='stylesheet' type='text/css'>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <link href="/static/css/custom/bootstrap.min.css" rel="stylesheet">
     <link href="/static/css/custom/portal.css" rel="stylesheet">
     <script src="/static/js/dist/jquery.min.js"></script>
 </head>
 <body>
-
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -42,51 +42,33 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/home">Portal</a>
+          <a class="navbar-brand" href="/">Life Church Portal</a>
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li id="nav-home" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/">Home</a></li>
-            <li id="nav-people" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/people/page/1">People</a></li>
-            <li id="nav-events" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/events">Events</a></li>
-            {% if 'admin' in session.role %}
-            <li id="nav-admin" data-toggle="collapse" data-target=".nav-collapse"><a href="/admin">Admin</a></li>
-            {% endif %}
-            <li data-toggle="collapse" data-target=".nav-collapse"><a href="https://accounts.google.com">{{ session.name }}</a></li>
           </ul>
         </div>
       </div>
     </div>
 
-{% raw %}
-<script type="text/x-handlebars">
-<div id="main" class="container-fluid" role="main">
-    <br>
-    {{outlet}}
-
-</div>
-</script>
-{% endraw %}
-    {{ request.args.get('testing') }}
-
-{% include "handlebars/people.handlebars" %}
-{% include "handlebars/person.handlebars" %}
-
-    <script src="/static/js/dist/vendor.js"></script>
-    <script src="/static/js/dist/handlebars.min.js"></script>
-    <script src="/static/js/dist/ember.min.js"></script>
-
-    {%  if request.args.get('testing') %}
-    <div id="qunit"></div>
-    <div id="qunit-fixture"></div>
-
-    <script src="/static/js/test/qunit/qunit.js"></script>
-    <link href="/static/js/test/qunit/qunit.css" rel="stylesheet"-->
-    <script src="/static/js/dist/portal.js"></script>
-    <script src="/static/js/test/test.js"></script>
-    {% else %}
-    <script src="/static/js/dist/portal.js"></script>
-    {% endif %}
+    <div class="jumbotron">
+      <div class="container">
+        <br />
+        <h1>Life Church Portal</h1>
+        <div>
+            <a href="/home" class="btn btn-primary btn-lg">Sign-in Using Google &raquo;</a>
+        </div>
+      </div>
+    </div>
+    
+    <div id="main" class="container" role="main">
+        <h4>Don't have an Account?</h4>
+        <ol>
+            <li>Create a Google Account <a href="https://accounts.google.com/signupwithoutgmail">with your existing Email address</a>.</li>
+            <li>Contact the site administrators and let them know your Google Account Email address.</li>
+            <li>Login to with the button above when you are informed that your Life Church Music account has been created.</li>
+        </ol>
+    </div>
 
 </body>
 </html>

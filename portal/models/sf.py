@@ -1,3 +1,4 @@
+import datetime
 import os
 from simple_salesforce import Salesforce
 from portal import app
@@ -240,3 +241,26 @@ class SFPerson(object):
             self.connection.ContactLifeGroup__c.create(sf_record)
 
         return small_group
+
+    def user_by_email(self, email):
+        """
+        Get the user by the Email address.
+        """
+        people = self.connection.query("""
+            select Id, Portal_Google_Account__c, Portal_Role__c, Name
+            from Contact
+            where Portal_Google_Account__c = '%s'
+        """ % email)
+        if len(people["records"]) > 0:
+            return people["records"][0]
+        else:
+            return
+
+    def update_last_login(self, user_id):
+        """
+        Update the last login time for the user.
+        """
+        now = datetime.datetime.utcnow()
+        self.connection.Contact.update(
+            user_id,
+            {"Portal_Last_Login__c": now.strftime("%Y-%m-%dT%H:%M:%S")})
