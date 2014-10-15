@@ -72,6 +72,15 @@ App.Person.reopenClass({
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         });
+    },
+
+    permissions: function() {
+        return ajax('/api/permissions', {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
     }
 
 });

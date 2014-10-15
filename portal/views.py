@@ -1,4 +1,4 @@
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request, session
 from portal import app
 from portal.models.sf import SFPerson
 from portal.authorize import login_required
@@ -66,3 +66,16 @@ def api_person_small_group(contact_id, group_id):
     sf = SFPerson()
     small_group = sf.person_small_group_update(contact_id, group_id)
     return jsonify(response="Success", small_group=small_group)
+
+
+@app.route('/api/permissions', methods=['POST'])
+def api_permissions():
+    """
+    Get the permissions for the current user.
+    """
+    permissions = {
+        "name": session["name"],
+        "role": session["role"],
+        "user_id": session["user_id"],
+    }
+    return jsonify(response="Success", permissions=permissions)

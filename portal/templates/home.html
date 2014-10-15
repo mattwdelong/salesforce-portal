@@ -47,11 +47,6 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li id="nav-home" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/">Home</a></li>
-            <li id="nav-people" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/people/page/1">People</a></li>
-            <li id="nav-events" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/events">Events</a></li>
-            {% if 'admin' in session.role %}
-            <li id="nav-admin" data-toggle="collapse" data-target=".nav-collapse"><a href="/admin">Admin</a></li>
-            {% endif %}
             <li data-toggle="collapse" data-target=".nav-collapse"><a href="https://accounts.google.com">{{ session.name }}</a></li>
           </ul>
         </div>

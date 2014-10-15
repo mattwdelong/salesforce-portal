@@ -1,17 +1,40 @@
 App.PeopleController = Ember.ArrayController.extend({
+
+    getPermissions: function() {
+        var controller = this;
+        App.Person.permissions().then(function(result) {
+            controller.set('permissions', result.permissions);
+        });
+    },
+
+    findPeople: function() {
+        // Only perform the search if a name is entered
+        var name = this.get('find_name');
+        if (name) {
+            name = name.replace(/^\s+|\s+$/g,'');
+            if (name.length == 0) {
+                return;
+            }
+        } else {
+            return;
+        }
+
+        var data = {
+            name: name
+        };
+
+        var controller = this;
+        App.Person.find(data).then(function(data) {
+            var results = data.results;
+            controller.get('content').setObjects(results.records);
+        }).catch(function(error) {
+            controller.set('error', error.message);
+        });
+    },
+
     actions: {
         findPeople: function () {
-            var data = {
-                name: this.get('find_name')
-            };
-
-            var controller = this;
-            App.Person.find(data).then(function(data) {
-                var results = data.results;
-                controller.get('content').setObjects(results.records);
-            }).catch(function(error) {
-                controller.set('error', error.message);
-            });
+            this.findPeople();
         },
 
         clearFind: function() {
@@ -23,6 +46,13 @@ App.PeopleController = Ember.ArrayController.extend({
 
 
 App.PersonController = Ember.ObjectController.extend({
+
+    getPermissions: function() {
+        var controller = this;
+        App.Person.permissions().then(function(result) {
+            controller.set('permissions', result.permissions);
+        });
+    },
 
     actions: {
         toggleTeam: function(team) {

@@ -11,19 +11,42 @@ App.Router.map(function() {
 });
 
 ;App.PeopleController = Ember.ArrayController.extend({
+
+    getPermissions: function() {
+        var controller = this;
+        App.Person.permissions().then(function(result) {
+            controller.set('permissions', result.permissions);
+        });
+    },
+
+    findPeople: function() {
+        // Only perform the search if a name is entered
+        var name = this.get('find_name');
+        if (name) {
+            name = name.replace(/^\s+|\s+$/g,'');
+            if (name.length == 0) {
+                return;
+            }
+        } else {
+            return;
+        }
+
+        var data = {
+            name: name
+        };
+
+        var controller = this;
+        App.Person.find(data).then(function(data) {
+            var results = data.results;
+            controller.get('content').setObjects(results.records);
+        }).catch(function(error) {
+            controller.set('error', error.message);
+        });
+    },
+
     actions: {
         findPeople: function () {
-            var data = {
-                name: this.get('find_name')
-            };
-
-            var controller = this;
-            App.Person.find(data).then(function(data) {
-                var results = data.results;
-                controller.get('content').setObjects(results.records);
-            }).catch(function(error) {
-                controller.set('error', error.message);
-            });
+            this.findPeople();
         },
 
         clearFind: function() {
@@ -35,6 +58,13 @@ App.Router.map(function() {
 
 
 App.PersonController = Ember.ObjectController.extend({
+
+    getPermissions: function() {
+        var controller = this;
+        App.Person.permissions().then(function(result) {
+            controller.set('permissions', result.permissions);
+        });
+    },
 
     actions: {
         toggleTeam: function(team) {
@@ -161,29 +191,36 @@ App.Person.reopenClass({
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         });
+    },
+
+    permissions: function() {
+        return ajax('/api/permissions', {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
     }
 
 });
 ;App.IndexRoute = Ember.Route.extend({
-  beforeModel: function() {
-    this.transitionTo('people');
-  }
+    beforeModel: function() {
+        this.transitionTo('people');
+    }
 });
 
 App.PeopleRoute = Ember.Route.extend({
     model: function(params) {
         return [];
-//        var pageNo = null;
-//        if (params.page_no) {
-//            pageNo = params.page_no;
-//        }
-//
-//
-//        return App.Person.getAll(pageNo).then(function(data) {
-//            // This is a paginated result
-//            var results = data.results;
-//            return results.records;
-//        });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup PeopleRoute");
+        controller.set('content', model);
+        controller.getPermissions();
+
+        // Run the search
+        controller.findPeople();
     }
 
 });
@@ -197,5 +234,15 @@ App.PersonRoute = Ember.Route.extend({
             console.log(data.person.small_groups.records);
             return data.person;
         });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup PersonRoute");
+        controller.set('content', model);
+        controller.getPermissions();
+
+        // Trigger load
+        //controller.rotaRangeChange();
+        //controller.awayRangeChange();
     }
 });

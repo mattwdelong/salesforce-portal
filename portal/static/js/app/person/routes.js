@@ -1,23 +1,21 @@
 App.IndexRoute = Ember.Route.extend({
-  beforeModel: function() {
-    this.transitionTo('people');
-  }
+    beforeModel: function() {
+        this.transitionTo('people');
+    }
 });
 
 App.PeopleRoute = Ember.Route.extend({
     model: function(params) {
         return [];
-//        var pageNo = null;
-//        if (params.page_no) {
-//            pageNo = params.page_no;
-//        }
-//
-//
-//        return App.Person.getAll(pageNo).then(function(data) {
-//            // This is a paginated result
-//            var results = data.results;
-//            return results.records;
-//        });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup PeopleRoute");
+        controller.set('content', model);
+        controller.getPermissions();
+
+        // Run the search
+        controller.findPeople();
     }
 
 });
@@ -31,5 +29,15 @@ App.PersonRoute = Ember.Route.extend({
             console.log(data.person.small_groups.records);
             return data.person;
         });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup PersonRoute");
+        controller.set('content', model);
+        controller.getPermissions();
+
+        // Trigger load
+        //controller.rotaRangeChange();
+        //controller.awayRangeChange();
     }
 });
