@@ -1,5 +1,6 @@
 import datetime
 import os
+from flask import session
 from simple_salesforce import Salesforce
 from portal import app
 
@@ -9,7 +10,8 @@ FIELDS = """Id, Name, FirstName, LastName, Email, Contact_Type__c, HomePhone,
             Gender__c, Marital_Status__c, Salvation__c, IsBaptised__c,
             RecordType.Name, isKeyLeader__c, Partner__c"""
 
-class SFPerson(object):
+
+class SFObject(object):
     def __init__(self):
         self.connection = self.login()
         self.record_type = {}
@@ -24,6 +26,8 @@ class SFPerson(object):
             sandbox=sandbox
         )
 
+
+class SFPerson(SFObject):
     def get_all(self, more=None):
         """
         Get all the contacts from Salesforce
@@ -264,3 +268,102 @@ class SFPerson(object):
         self.connection.Contact.update(
             user_id,
             {"Portal_Last_Login__c": now.strftime("%Y-%m-%dT%H:%M:%S")})
+
+
+class SFContact(SFObject):
+    def teams(self):
+        """
+        Get the teams and permissions for the current user.
+        """
+        if session['role'] == "Admin":
+            # Get all the teams
+            soql = """
+                select Id, Name, TrackAttenders__c from Team__c
+                where Team__c.IsActive__c=true
+            """
+        else:
+            soql = """
+                select Id, Name, Access__c, Team__r.Id, Team__r.Name, Team__r.TrackAttenders__c
+                from ContactTeamLink__c
+                where Team__r.IsActive__c=true
+                and Contact__c = '%s'
+            """ % session['user_id']
+        teams = self.connection.query(soql)
+
+        records = []
+        for t in teams["records"]:
+            if session['role'] == "Admin":
+                record = {
+                    "Id": t["Id"],
+                    "Name": t["Name"],
+                    "Access": "Manage",
+                    "TrackAttenders": t["TrackAttenders__c"],
+                }
+            else:
+                record = {
+                    "Id": t["Team__r"]["Id"],
+                    "Name": t["Team__r"]["Name"],
+                    "Access": "Access__c",
+                    "TrackAttenders": t["Team__r"]["TrackAttenders__c"],
+                }
+            records.append(record)
+
+        return records
+
+    def small_groups(self):
+        """
+        Get the small groups based on the user's permissions.
+        """
+        if session['role'] == "Admin":
+            soql = """
+                select Id, Name from Life_Group__c
+                where Active__c=true
+            """
+        else:
+            soql = """
+                select Id,Leader__c, Life_Group__r.Id, Life_Group__r.Name
+                from ContactLifeGroup__c
+                where Life_Group__r.Active__c=true
+                and Contact__c = '%s'
+            """ % session['user_id']
+        groups = self.connection.query(soql)
+
+        records = []
+        for g in groups["records"]:
+            if session['role'] == "Admin":
+                record = {
+                    "Id": g["Id"],
+                    "Name": g["Name"],
+                    "Leader": True,
+                }
+            else:
+                record = {
+                    "Id": g["Life_Group__r"]["Id"],
+                    "Name": g["Life_Group__r"]["Name"],
+                    "Leader": g["Leader__c"],
+                }
+            records.append(record)
+
+        return records
+
+    def team_members(self, team_id):
+        """
+        Get the members of the team.
+        """
+        soql = """
+            select Contact__r.Id, Contact__r.Name, Contact__r.Email
+            from ContactTeamLink__c
+            where Team__r.IsActive__c=true
+            and Team__r.Id = '%s'
+        """ % team_id
+        teams = self.connection.query(soql)
+
+        members = { "people": []}
+        for t in teams["records"]:
+            members["people"].append({
+                "Id": t["Contact__r"]["Id"],
+                "Name": t["Contact__r"]["Name"],
+                "Email": t["Contact__r"]["Email"],
+            })
+
+        return members

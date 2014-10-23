@@ -84,3 +84,38 @@ App.Person.reopenClass({
     }
 
 });
+
+
+App.Contact = Ember.Object.extend({});
+
+App.Contact.reopenClass({
+    url: '/api/contact',
+
+    all: function() {
+        return ajax(this.url, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    teams: function() {
+        return ajax(this.url + '/teams', {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    team_members: function(teamId) {
+        return ajax(this.url + '/teams/' + teamId, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    }
+
+});

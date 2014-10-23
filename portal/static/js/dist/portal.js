@@ -8,6 +8,7 @@ App.Router.map(function() {
     this.resource('index', { path: '/' });
     this.resource('people', { path: '/people' });
     this.resource('person', { path: '/person/:Id' });
+    this.resource('contact', { path: '/contact'});
 });
 
 ;App.PeopleController = Ember.ArrayController.extend({
@@ -38,6 +39,7 @@ App.Router.map(function() {
         var controller = this;
         App.Person.find(data).then(function(data) {
             var results = data.results;
+
             controller.get('content').setObjects(results.records);
         }).catch(function(error) {
             controller.set('error', error.message);
@@ -115,6 +117,35 @@ App.PersonController = Ember.ObjectController.extend({
                 controller.set('error', error.message);
             });
         }.observes('small_groups')
+    }
+});
+
+App.ContactController = Ember.ObjectController.extend({
+    contactIds: [],
+    members: [],
+
+    actions: {
+        toggleTeam: function(team) {
+            // Toggle the selection of the team
+            var controller = this;
+
+            // Get the contacts for the team
+            var contactIds = controller.get("contactIds");
+            var members = [];
+            console.log(members);
+
+            App.Contact.team_members(team.Id).then(function (data) {
+                data.members.people.forEach(function (p) {
+                    if (contactIds.indexOf(p.Id)<0) {
+                        contactIds.push(p.Id);
+                        members.push(p);
+                    }
+                });
+                controller.set("contactIds", contactIds);
+                console.log(members);
+                controller.set("members", members);
+            });
+        }.observes("members")
     }
 });
 ;
@@ -203,6 +234,41 @@ App.Person.reopenClass({
     }
 
 });
+
+
+App.Contact = Ember.Object.extend({});
+
+App.Contact.reopenClass({
+    url: '/api/contact',
+
+    all: function() {
+        return ajax(this.url, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    teams: function() {
+        return ajax(this.url + '/teams', {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    team_members: function(teamId) {
+        return ajax(this.url + '/teams/' + teamId, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    }
+
+});
 ;App.IndexRoute = Ember.Route.extend({
     beforeModel: function() {
         this.transitionTo('people');
@@ -240,9 +306,22 @@ App.PersonRoute = Ember.Route.extend({
         console.log("Setup PersonRoute");
         controller.set('content', model);
         controller.getPermissions();
-
-        // Trigger load
-        //controller.rotaRangeChange();
-        //controller.awayRangeChange();
     }
+});
+
+App.ContactRoute = Ember.Route.extend({
+    model: function() {
+        return App.Contact.all().then( function(data) {
+            console.log(data.data);
+            return data.data;
+        });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup ContactRoute");
+        controller.set('content', model);
+        //controller.getPermissions();
+
+    }
+
 });

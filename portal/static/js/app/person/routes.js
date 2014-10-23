@@ -35,9 +35,22 @@ App.PersonRoute = Ember.Route.extend({
         console.log("Setup PersonRoute");
         controller.set('content', model);
         controller.getPermissions();
-
-        // Trigger load
-        //controller.rotaRangeChange();
-        //controller.awayRangeChange();
     }
+});
+
+App.ContactRoute = Ember.Route.extend({
+    model: function() {
+        return App.Contact.all().then( function(data) {
+            console.log(data.data);
+            return data.data;
+        });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup ContactRoute");
+        controller.set('content', model);
+        //controller.getPermissions();
+
+    }
+
 });

@@ -1,6 +1,6 @@
 from flask import render_template, jsonify, request, session
 from portal import app
-from portal.models.sf import SFPerson
+from portal.models.sf import SFPerson, SFContact
 from portal.authorize import login_required
 from portal.utils import is_testing
 
@@ -79,3 +79,40 @@ def api_permissions():
         "user_id": session["user_id"],
     }
     return jsonify(response="Success", permissions=permissions)
+
+
+@app.route('/api/contact/teams', methods=['POST'])
+def api_teams():
+    """
+    Get the teams, with the permissions of the ones that can be contacted.
+    """
+    sf = SFContact()
+    team_response = {
+        "teams": sf.teams(),
+    }
+
+    return jsonify(response="Success", data=team_response)
+
+
+@app.route('/api/contact', methods=['POST'])
+def api_contact():
+    """
+    Get the teams and small groups.
+    """
+    sf = SFContact()
+    response = {
+        "teams": sf.teams(),
+        "small_groups": sf.small_groups(),
+    }
+
+    return jsonify(response="Success", data=response)
+
+
+@app.route('/api/contact/teams/<team_id>', methods=['POST'])
+def api_team_members(team_id):
+    """
+    Get the people in a team.
+    """
+    sf = SFContact()
+    members = sf.team_members(team_id)
+    return jsonify(response="Success", members=members)

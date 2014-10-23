@@ -26,6 +26,7 @@ App.PeopleController = Ember.ArrayController.extend({
         var controller = this;
         App.Person.find(data).then(function(data) {
             var results = data.results;
+
             controller.get('content').setObjects(results.records);
         }).catch(function(error) {
             controller.set('error', error.message);
@@ -103,5 +104,34 @@ App.PersonController = Ember.ObjectController.extend({
                 controller.set('error', error.message);
             });
         }.observes('small_groups')
+    }
+});
+
+App.ContactController = Ember.ObjectController.extend({
+    contactIds: [],
+    members: [],
+
+    actions: {
+        toggleTeam: function(team) {
+            // Toggle the selection of the team
+            var controller = this;
+
+            // Get the contacts for the team
+            var contactIds = controller.get("contactIds");
+            var members = [];
+            console.log(members);
+
+            App.Contact.team_members(team.Id).then(function (data) {
+                data.members.people.forEach(function (p) {
+                    if (contactIds.indexOf(p.Id)<0) {
+                        contactIds.push(p.Id);
+                        members.push(p);
+                    }
+                });
+                controller.set("contactIds", contactIds);
+                console.log(members);
+                controller.set("members", members);
+            });
+        }.observes("members")
     }
 });
