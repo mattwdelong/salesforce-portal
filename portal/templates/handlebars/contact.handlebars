@@ -1,0 +1,43 @@
+{% raw %}
+<script type="text/x-handlebars" data-template-name="contact">
+<h2 class="sub-heading">Contact</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Select the Groups to be Contacted</h3></div>
+    <div class="panel-body">
+        <h4>Teams</h4>
+        {{#each team in teamsUnselected}}
+            <button {{action 'selectTeam' team}}>{{ team.Name }}</button>
+        {{/each}}
+        <hr />
+        <h4>Small Groups</h4>
+         {{#each sg in model.small_groups}}
+            {{#if sg.Selected}}
+            <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.Name }}</button>
+            {{else}}
+            <button {{action 'toggleSmallGroup' sg}}>{{ sg.Name }}</button>
+            {{/if}}
+        {{/each}}
+
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Email People</h3></div>
+    <div class="panel-body">
+        <div>
+            {{#each team in teamsSelected}}
+            <button {{action 'deselectTeam' team}} class="btn btn-primary">{{ team.Name }} <span class="glyphicon glyphicon-remove-circle"></span></button>
+            {{/each}}
+        </div>
+        <p>Email addresses of the people in the selected groups. Copy and paste the list into the 'BCC' field of your Email program.</p>
+        <code>
+            {{#each m in members}}
+                {{m.Name}} <{{m.Email}}>,
+            {{/each}}
+        </code>
+    </div>
+</div>
+
+</script>
+{% endraw %}
