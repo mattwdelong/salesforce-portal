@@ -41,7 +41,6 @@ App.PersonRoute = Ember.Route.extend({
 App.ContactRoute = Ember.Route.extend({
     model: function() {
         return App.Contact.all().then( function(data) {
-            console.log(data.data);
             return data.data;
         });
     },
@@ -50,7 +49,7 @@ App.ContactRoute = Ember.Route.extend({
         console.log("Setup ContactRoute");
         controller.set('content', model);
         //controller.getPermissions();
-
+        controller.reset();
     }
 
 });

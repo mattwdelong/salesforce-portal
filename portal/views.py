@@ -108,11 +108,19 @@ def api_contact():
     return jsonify(response="Success", data=response)
 
 
-@app.route('/api/contact/teams/<team_id>', methods=['POST'])
-def api_team_members(team_id):
+@app.route('/api/contact/teams/selected', methods=['POST'])
+def api_team_members():
     """
     Get the people in a team.
     """
+    members = []
+
+    team_ids = request.json["selected_teams"]
+
     sf = SFContact()
-    members = sf.team_members(team_id)
+    for t in team_ids:
+        team_members = sf.team_members(t)
+        for member in team_members:
+            if member not in members:
+                members.append(member)
     return jsonify(response="Success", members=members)

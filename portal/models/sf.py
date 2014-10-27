@@ -298,6 +298,7 @@ class SFContact(SFObject):
                     "Name": t["Name"],
                     "Access": "Manage",
                     "TrackAttenders": t["TrackAttenders__c"],
+                    "Selected": False,
                 }
             else:
                 record = {
@@ -305,6 +306,7 @@ class SFContact(SFObject):
                     "Name": t["Team__r"]["Name"],
                     "Access": "Access__c",
                     "TrackAttenders": t["Team__r"]["TrackAttenders__c"],
+                    "Selected": False,
                 }
             records.append(record)
 
@@ -335,12 +337,14 @@ class SFContact(SFObject):
                     "Id": g["Id"],
                     "Name": g["Name"],
                     "Leader": True,
+                    "Selected": False,
                 }
             else:
                 record = {
                     "Id": g["Life_Group__r"]["Id"],
                     "Name": g["Life_Group__r"]["Name"],
                     "Leader": g["Leader__c"],
+                    "Selected": False,
                 }
             records.append(record)
 
@@ -358,9 +362,9 @@ class SFContact(SFObject):
         """ % team_id
         teams = self.connection.query(soql)
 
-        members = { "people": []}
+        members = []
         for t in teams["records"]:
-            members["people"].append({
+            members.append({
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
                 "Email": t["Contact__r"]["Email"],

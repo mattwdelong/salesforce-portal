@@ -109,10 +109,10 @@ App.Contact.reopenClass({
         });
     },
 
-    team_members: function(teamId) {
-        return ajax(this.url + '/teams/' + teamId, {
+    team_members: function(selectedTeamIds) {
+        return ajax(this.url + '/teams/selected', {
             type: 'POST',
-            data: JSON.stringify({}),
+            data: JSON.stringify({selected_teams: selectedTeamIds}),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         });

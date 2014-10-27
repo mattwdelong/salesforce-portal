@@ -110,28 +110,56 @@ App.PersonController = Ember.ObjectController.extend({
 App.ContactController = Ember.ObjectController.extend({
     contactIds: [],
     members: [],
+    teamsUnselected: [],
+    teamsSelected: [],
+
+    reset: function() {
+        var teams = this.get("model").teams;
+        this.set("teamsUnselected", teams);
+    },
 
     actions: {
-        toggleTeam: function(team) {
-            // Toggle the selection of the team
+        selectTeam: function(team) {
+            // Select the team
             var controller = this;
 
-            // Get the contacts for the team
-            var contactIds = controller.get("contactIds");
-            var members = [];
-            console.log(members);
+            // Toggle the selection of the team
+            var index = controller.get("teamsSelected").indexOf(team);
+            if (index >= 0) {
+                // The team is already selected
+                return;
+            }
 
-            App.Contact.team_members(team.Id).then(function (data) {
-                data.members.people.forEach(function (p) {
-                    if (contactIds.indexOf(p.Id)<0) {
-                        contactIds.push(p.Id);
-                        members.push(p);
-                    }
-                });
-                controller.set("contactIds", contactIds);
-                console.log(members);
-                controller.set("members", members);
+            // Add the team to the list of selected teams
+            var selTeams = controller.get("teamsSelected");
+            controller.get("teamsSelected").addObject(team);
+
+            // Remove the team from the unselected team list
+            var unselectedIndex = controller.get("teamsUnselected").indexOf(team);
+            var unselected = controller.get("teamsUnselected");
+            unselected.splice(unselectedIndex, 1);
+            controller.set("teamsUnselected", unselected);
+
+            // Get a list of team IDs of the selected teams
+            var selectedTeamIds = [];
+            selTeams.forEach(function(t) {
+                selectedTeamIds.push(t.Id);
             });
-        }.observes("members")
+
+            // Fetch the members of the selected team and add to member list
+
+            App.Contact.team_members(selectedTeamIds).then(function (data) {
+                controller.set("members", data.members);
+            });
+        },
+
+        deselectTeam: function(team) {
+            console.log("Deselect team");
+            // Remove the team from the selected teams list
+
+            // Add the team to the unselected teams list
+
+            // Update the member list from the selected teams list
+        }
     }
 });
