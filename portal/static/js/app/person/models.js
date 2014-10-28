@@ -20,6 +20,13 @@ function ajax (url, options) {
 }
 
 
+Ember.Handlebars.registerBoundHelper('emailList', function(members) {
+    return members.map(function(item) {
+        return item.Name + " <" + item.Email + ">";
+    }).join(", ");
+});
+
+
 App.Person = Ember.Object.extend({});
 
 App.Person.reopenClass({

@@ -23,7 +23,9 @@
 </div>
 
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Email People</h3></div>
+    <div class="panel-heading">
+        <h3 class="panel-title">{{#if inProgress}}<img src="/static/images/ajax-loader.gif" /> {{/if}}Email People</h3>
+    </div>
     <div class="panel-body">
         <div>
             {{#each team in teamsSelected}}
@@ -32,9 +34,7 @@
         </div>
         <p>Email addresses of the people in the selected groups. Copy and paste the list into the 'BCC' field of your Email program.</p>
         <code>
-            {{#each m in members}}
-                {{m.Name}} <{{m.Email}}>,
-            {{/each}}
+            {{emailList members}}
         </code>
     </div>
 </div>
