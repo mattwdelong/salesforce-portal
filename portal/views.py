@@ -45,9 +45,10 @@ def api_people_find():
 @login_required
 def api_person_get(contact_id):
     sf = SFPerson()
-    contact, small_groups, teams = sf.person_by_id(contact_id)
+    contact, small_groups, teams, team_permissions = sf.person_by_id(contact_id)
     contact['small_groups'] = small_groups
     contact['team_serving'] = teams
+    contact['team_permissions'] = team_permissions
 
     return jsonify(response="Success", person=contact)
 
@@ -57,6 +58,14 @@ def api_person_get(contact_id):
 def api_person_team(contact_id, team_id):
     sf = SFPerson()
     team = sf.person_team_serving_update(contact_id, team_id)
+    return jsonify(response="Success", team=team)
+
+
+@app.route('/api/people/<contact_id>/team_permissions/<team_id>', methods=['POST'])
+@login_required
+def api_person_team_permissions(contact_id, team_id):
+    sf = SFPerson()
+    team = sf.person_team_permissions_update(contact_id, team_id)
     return jsonify(response="Success", team=team)
 
 

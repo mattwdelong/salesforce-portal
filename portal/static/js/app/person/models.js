@@ -72,6 +72,15 @@ App.Person.reopenClass({
         });
     },
 
+    updateTeamPermissions: function(contactId, teamId) {
+        return ajax(this.url + '/' + contactId + '/team_permissions/' + teamId, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
     updateSmallGroup: function(contactId, groupId) {
         return ajax(this.url + '/' + contactId + '/small_group/' + groupId, {
             type: 'POST',

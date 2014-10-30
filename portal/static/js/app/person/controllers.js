@@ -48,10 +48,20 @@ App.PeopleController = Ember.ArrayController.extend({
 
 App.PersonController = Ember.ObjectController.extend({
 
+    isAdmin: false,
+
     getPermissions: function() {
         var controller = this;
         App.Person.permissions().then(function(result) {
             controller.set('permissions', result.permissions);
+
+            var isAdmin = false;
+            if (controller.get("permissions")) {
+                if (controller.get("permissions").role=="Admin") {
+                    isAdmin = true;
+                }
+            }
+            controller.set('isAdmin', isAdmin);
         });
     },
 
@@ -103,7 +113,32 @@ App.PersonController = Ember.ObjectController.extend({
             }).catch(function(error) {
                 controller.set('error', error.message);
             });
-        }.observes('small_groups')
+        }.observes('small_groups'),
+
+        toggleTeamPermissions: function(team) {
+            // Toggle the team permissions
+            var teams = [];
+            var controller = this;
+
+            App.Person.updateTeamPermissions(
+                this.get("model").Id, team.team_id).then(function(data) {
+                team.in_team = data.team.in_team;
+                team.access_manage =  data.team.access_manage;
+                team.access_contact =  data.team.access_contact;
+
+                // Update the view
+                controller.get("model").team_permissions.forEach(function (t) {
+                    if (t.team_id==team.team_id) {
+                        teams.push(team);
+                    } else {
+                        teams.push(t);
+                    }
+                });
+                controller.get("model").team_permissions.setObjects(teams);
+            }).catch(function(error) {
+                controller.set('error', error.message);
+            });
+        }.observes('team_permissions')
     }
 });
 

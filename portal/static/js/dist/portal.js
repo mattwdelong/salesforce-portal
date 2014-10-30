@@ -61,10 +61,20 @@ App.Router.map(function() {
 
 App.PersonController = Ember.ObjectController.extend({
 
+    isAdmin: false,
+
     getPermissions: function() {
         var controller = this;
         App.Person.permissions().then(function(result) {
             controller.set('permissions', result.permissions);
+
+            var isAdmin = false;
+            if (controller.get("permissions")) {
+                if (controller.get("permissions").role=="Admin") {
+                    isAdmin = true;
+                }
+            }
+            controller.set('isAdmin', isAdmin);
         });
     },
 
@@ -116,7 +126,32 @@ App.PersonController = Ember.ObjectController.extend({
             }).catch(function(error) {
                 controller.set('error', error.message);
             });
-        }.observes('small_groups')
+        }.observes('small_groups'),
+
+        toggleTeamPermissions: function(team) {
+            // Toggle the team permissions
+            var teams = [];
+            var controller = this;
+
+            App.Person.updateTeamPermissions(
+                this.get("model").Id, team.team_id).then(function(data) {
+                team.in_team = data.team.in_team;
+                team.access_manage =  data.team.access_manage;
+                team.access_contact =  data.team.access_contact;
+
+                // Update the view
+                controller.get("model").team_permissions.forEach(function (t) {
+                    if (t.team_id==team.team_id) {
+                        teams.push(team);
+                    } else {
+                        teams.push(t);
+                    }
+                });
+                controller.get("model").team_permissions.setObjects(teams);
+            }).catch(function(error) {
+                controller.set('error', error.message);
+            });
+        }.observes('team_permissions')
     }
 });
 
@@ -264,6 +299,15 @@ App.Person.reopenClass({
         });
     },
 
+    updateTeamPermissions: function(contactId, teamId) {
+        return ajax(this.url + '/' + contactId + '/team_permissions/' + teamId, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
     updateSmallGroup: function(contactId, groupId) {
         return ajax(this.url + '/' + contactId + '/small_group/' + groupId, {
             type: 'POST',
@@ -346,7 +390,6 @@ App.PersonRoute = Ember.Route.extend({
             this.transitionTo('person', 'me');
         }
         return App.Person.findById(params.Id).then( function(data) {
-            console.log(data.person.small_groups.records);
             return data.person;
         });
     },

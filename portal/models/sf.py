@@ -63,8 +63,9 @@ class SFPerson(SFObject):
 
         small_groups = self.person_small_groups(sf_id)
         teams = self.person_team_serving(sf_id)
+        team_permissions = self.person_team_serving_permissions(sf_id)
 
-        return result, small_groups, teams
+        return result, small_groups, teams, team_permissions
 
     def person_small_groups(self, sf_id):
         """
@@ -152,6 +153,44 @@ class SFPerson(SFObject):
 
         return team_list
 
+    def person_team_serving_permissions(self, sf_id):
+        """
+        Get the teams that a person has permissions over.
+        """
+        # Full list of active teams
+        teams = self.connection.query("""
+              select Id, Name from Team__c
+              where IsActive__c=true
+              order by Name""")
+
+        in_teams = self.connection.query("""
+              select Id, Name, Team__r.Id, Access__c
+              from Contact_PortalGroup_Link__c
+              where Team__r.IsActive__c=true
+              and Contact__c='%s'""" % sf_id)
+
+        team_list = []
+        for ts in teams["records"]:
+            team = {
+                "team_id": ts["Id"],
+                "team_name": ts["Name"],
+                "in_team": False,
+                "access_contact": False,
+                "access_manage": False,
+            }
+            for ct in in_teams["records"]:
+                if ts["Id"] == ct["Team__r"]["Id"]:
+                    team["in_team"] = True
+                    if ct["Access__c"] == "Manage":
+                        team["access_manage"] = True
+                    if ct["Access__c"] == "Contact Only":
+                        team["access_contact"] = True
+            team_list.append(team)
+
+            app.logger.debug(team)
+
+        return team_list
+
     def person_team_serving_update(self, contact_id, team_id):
         """
         Toggle the access and membership of a team.
@@ -201,6 +240,59 @@ class SFPerson(SFObject):
                 "Access__c": "",
             }
             self.connection.ContactTeamLink__c.create(sf_record)
+            team["access"] = True
+
+        return team
+
+    def person_team_permissions_update(self, contact_id, team_id):
+        """
+        Toggle the access and membership of a team.
+        None => Contact-Only => Manage => ...
+        """
+        team = {
+            "in_team": True,
+            "access_contact": False,
+            "access_manage": False
+        }
+
+        # Get the current team membership
+        in_team = self.connection.query("""
+              select Id, Name, Team__r.Id, Access__c
+              from Contact_PortalGroup_Link__c
+              where Team__r.IsActive__c=true
+              and Contact__c='%s' and Team__r.Id='%s'""" %
+                                        (contact_id, team_id))
+
+        if len(in_team["records"]) > 0:
+            membership = in_team["records"][0]
+            if membership["Access__c"] == "Manage":
+                # Remove membership
+                self.connection.Contact_PortalGroup_Link__c.delete(membership["Id"])
+                team["in_team"] = False
+            elif membership["Access__c"] == "Contact Only":
+                # Allow to manage
+                sf_record = {
+                    "Access__c": "Manage"
+                }
+                self.connection.Contact_PortalGroup_Link__c.update(
+                    membership["Id"], sf_record)
+                team["access_manage"] = True
+            else:
+                # Allow to contact
+                sf_record = {
+                    "Access__c": "Contact Only"
+                }
+                self.connection.Contact_PortalGroup_Link__c.update(
+                    membership["Id"], sf_record)
+                team["access_contact"] = True
+        else:
+            # Add membership
+            sf_record = {
+                'Contact__c': contact_id,
+                'Team__c': team_id,
+                "Access__c": "Contact Only",
+            }
+            self.connection.Contact_PortalGroup_Link__c.create(sf_record)
             team["access"] = True
 
         return team

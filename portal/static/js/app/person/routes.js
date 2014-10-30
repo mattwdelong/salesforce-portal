@@ -26,7 +26,6 @@ App.PersonRoute = Ember.Route.extend({
             this.transitionTo('person', 'me');
         }
         return App.Person.findById(params.Id).then( function(data) {
-            console.log(data.person.small_groups.records);
             return data.person;
         });
     },
