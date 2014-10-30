@@ -104,16 +104,22 @@
                 {{#each ts in model.team_serving}}
                     {{#if ts.in_team}}
                         {{#if ts.access_manage}}
-                        <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Manage</span></button>
+                            <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }}</button>
                         {{else}}
-                            {{#if ts.access_contact}}
-                            <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Contact</span></button>
-                            {{else}}
+                            {{#if isAdmin}}
                                 <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }}</button>
+                            {{else}}
+                                <label class="label label-success">{{ ts.team_name }}</label>
                             {{/if}}
                         {{/if}}
                     {{else}}
-                    <button {{action 'toggleTeam' ts}}>{{ ts.team_name }}</button>
+                        {{#if ts.access_manage}}
+                            <button {{action 'toggleTeam' ts}}>{{ ts.team_name }}</button>
+                        {{else}}
+                            {{#if isAdmin}}
+                                <button {{action 'toggleTeam' ts}}>{{ ts.team_name }}</button>
+                            {{/if}}
+                        {{/if}}
                     {{/if}}
                 {{/each}}
             </table>

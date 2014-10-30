@@ -62,8 +62,13 @@ class SFPerson(SFObject):
         result["RecordTypeName"] = self.get_record_type(result["RecordTypeId"])
 
         small_groups = self.person_small_groups(sf_id)
-        teams = self.person_team_serving(sf_id)
         team_permissions = self.person_team_serving_permissions(sf_id)
+
+        # Get the list of teams the current user can manage
+        manageable_teams = self.person_team_serving_permissions(
+            session['user_id'])
+        manageable_teams = [t["team_id"] for t in manageable_teams if t["access_manage"]]
+        teams = self.person_team_serving(sf_id, manageable_teams)
 
         return result, small_groups, teams, team_permissions
 
@@ -115,9 +120,10 @@ class SFPerson(SFObject):
             self.record_type[result["Id"]] = result["Name"]
         return self.record_type.get(sf_id)
 
-    def person_team_serving(self, sf_id):
+    def person_team_serving(self, sf_id, manageable_teams):
         """
-        Get the teams that a person is serving in.
+        Get the teams that a person is serving in and identify the ones that
+        the user has permissions to manage.
         """
         # Full list of active teams
         teams = self.connection.query("""
@@ -143,13 +149,9 @@ class SFPerson(SFObject):
             for ct in in_teams["records"]:
                 if ts["Id"] == ct["Team__r"]["Id"]:
                     team["in_team"] = True
-                    if ct["Access__c"] == "Manage":
+                    if ct["Team__r"]["Id"] in manageable_teams:
                         team["access_manage"] = True
-                    if ct["Access__c"] == "Contact Only":
-                        team["access_contact"] = True
             team_list.append(team)
-
-            app.logger.debug(team)
 
         return team_list
 
@@ -187,14 +189,12 @@ class SFPerson(SFObject):
                         team["access_contact"] = True
             team_list.append(team)
 
-            app.logger.debug(team)
-
         return team_list
 
     def person_team_serving_update(self, contact_id, team_id):
         """
         Toggle the access and membership of a team.
-        None => View => Contact-Only => Manage => ...
+        None => Member => ...
         """
         team = {
             "in_team": True,
@@ -212,26 +212,9 @@ class SFPerson(SFObject):
 
         if len(in_team["records"]) > 0:
             membership = in_team["records"][0]
-            if membership["Access__c"] == "Manage":
-                # Remove membership
-                self.connection.ContactTeamLink__c.delete(membership["Id"])
-                team["in_team"] = False
-            elif membership["Access__c"] == "Contact Only":
-                # Allow to manage
-                sf_record = {
-                    "Access__c": "Manage"
-                }
-                self.connection.ContactTeamLink__c.update(
-                    membership["Id"], sf_record)
-                team["access_manage"] = True
-            else:
-                # Allow to contact
-                sf_record = {
-                    "Access__c": "Contact Only"
-                }
-                self.connection.ContactTeamLink__c.update(
-                    membership["Id"], sf_record)
-                team["access_contact"] = True
+            # Remove membership
+            self.connection.ContactTeamLink__c.delete(membership["Id"])
+            team["in_team"] = False
         else:
             # Add membership
             sf_record = {
