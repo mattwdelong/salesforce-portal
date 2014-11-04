@@ -411,7 +411,6 @@ App.ContactRoute = Ember.Route.extend({
     setupController: function(controller, model) {
         console.log("Setup ContactRoute");
         controller.set('content', model);
-        //controller.getPermissions();
         controller.reset();
     }
 

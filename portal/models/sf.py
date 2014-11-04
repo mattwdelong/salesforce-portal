@@ -379,7 +379,7 @@ class SFContact(SFObject):
                 record = {
                     "Id": t["Team__r"]["Id"],
                     "Name": t["Team__r"]["Name"],
-                    "Access": "Access__c",
+                    "Access": t["Access__c"],
                     "TrackAttenders": t["Team__r"]["TrackAttenders__c"],
                     "Selected": False,
                 }

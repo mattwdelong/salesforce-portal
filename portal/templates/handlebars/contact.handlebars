@@ -7,16 +7,24 @@
     <div class="panel-body">
         <h4>Teams</h4>
         {{#each team in teamsUnselected}}
-            <button {{action 'selectTeam' team}}>{{ team.Name }}</button>
+            {{#if team.Access}}
+                <button {{action 'selectTeam' team}}>{{ team.Name }}</button>
+            {{else}}
+                <label class="label label-default">{{team.Name}}</label>
+            {{/if}}
         {{/each}}
         <hr />
         <h4>Small Groups</h4>
          {{#each sg in model.small_groups}}
-            {{#if sg.Selected}}
-            <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.Name }}</button>
-            {{else}}
-            <button {{action 'toggleSmallGroup' sg}}>{{ sg.Name }}</button>
-            {{/if}}
+             {{#if sg.Leader}}
+                {{#if sg.Selected}}
+                <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.Name }}</button>
+                {{else}}
+                <button {{action 'toggleSmallGroup' sg}}>{{ sg.Name }}</button>
+                {{/if}}
+             {{else}}
+                 <label class="label label-default">{{sg.Name}}</label>
+             {{/if}}
         {{/each}}
 
     </div>
