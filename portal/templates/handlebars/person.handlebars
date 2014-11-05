@@ -87,9 +87,23 @@
         <div class="col-lg-12">
                 {{#each sg in model.small_groups}}
                     {{#if sg.in_group}}
-                    <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.group_name }}{{#if sg.leader}} <span class="badge">Leader</span>{{/if}}</button>
+                        {{#if isAdmin}}
+                            <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.group_name }}{{#if sg.leader}} <span class="badge">Leader</span>{{/if}}</button>
+                        {{else}}
+                            {{#if sg.leader}}
+                                <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.group_name }}{{#if sg.leader}} <span class="badge">Leader</span>{{/if}}</button>
+                            {{else}}
+                                <label class="label label-success">{{ sg.group_name }} {{#if sg.leader}} <span>(Leader)</span>{{/if}}</label>
+                            {{/if}}
+                        {{/if}}
                     {{else}}
-                    <button {{action 'toggleSmallGroup' sg}}>{{ sg.group_name }}</button>
+                        {{#if isAdmin}}
+                            <button {{action 'toggleSmallGroup' sg}}>{{ sg.group_name }}</button>
+                        {{else}}
+                            {{#if sg.leader}}
+                                <button {{action 'toggleSmallGroup' sg}}>{{ sg.group_name }}</button>
+                            {{/if}}
+                        {{/if}}
                     {{/if}}
                 {{/each}}
             </table>
@@ -109,7 +123,7 @@
                             {{#if isAdmin}}
                                 <button {{action 'toggleTeam' ts}} class="btn btn-primary">{{ ts.team_name }}</button>
                             {{else}}
-                                <label class="label label-success">{{ ts.team_name }}</label>
+                                <label class="label label-primary">{{ ts.team_name }}</label>
                             {{/if}}
                         {{/if}}
                     {{else}}
