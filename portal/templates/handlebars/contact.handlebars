@@ -17,11 +17,7 @@
         <h4>Small Groups</h4>
          {{#each sg in model.small_groups}}
              {{#if sg.Leader}}
-                {{#if sg.Selected}}
-                <button {{action 'toggleSmallGroup' sg}} class="btn btn-primary">{{ sg.Name }}</button>
-                {{else}}
-                <button {{action 'toggleSmallGroup' sg}}>{{ sg.Name }}</button>
-                {{/if}}
+                <button {{action 'selectSmallGroup' sg}}>{{ sg.Name }}</button>
              {{else}}
                  <label class="label label-default">{{sg.Name}}</label>
              {{/if}}
@@ -38,6 +34,9 @@
         <div>
             {{#each team in teamsSelected}}
             <button {{action 'deselectTeam' team}} class="btn btn-primary">{{ team.Name }} <span class="glyphicon glyphicon-remove-circle"></span></button>
+            {{/each}}
+            {{#each sg in smallGroupsSelected}}
+            <button {{action 'deselectSmallGroup' sg}} class="btn btn-primary">{{ sg.Name }} <span class="glyphicon glyphicon-remove-circle"></span></button>
             {{/each}}
         </div>
         <p>Email addresses of the people in the selected groups. Copy and paste the list into the 'BCC' field of your Email program.</p>

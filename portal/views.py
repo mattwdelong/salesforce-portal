@@ -125,6 +125,7 @@ def api_team_members():
     members = []
 
     team_ids = request.json["selected_teams"]
+    group_ids = request.json["selected_small_groups"]
 
     sf = SFContact()
     for t in team_ids:
@@ -132,4 +133,12 @@ def api_team_members():
         for member in team_members:
             if member not in members:
                 members.append(member)
+
+    for t in group_ids:
+        group_members = sf.small_group_members(t)
+        for member in group_members:
+            if member not in members:
+                members.append(member)
+
+    app.logger.debug(members)
     return jsonify(response="Success", members=members)

@@ -125,10 +125,13 @@ App.Contact.reopenClass({
         });
     },
 
-    team_members: function(selectedTeamIds) {
+    team_members: function(selectedTeamIds, selectedGroupIds) {
         return ajax(this.url + '/teams/selected', {
             type: 'POST',
-            data: JSON.stringify({selected_teams: selectedTeamIds}),
+            data: JSON.stringify({
+                selected_teams: selectedTeamIds,
+                selected_small_groups: selectedGroupIds
+            }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         });

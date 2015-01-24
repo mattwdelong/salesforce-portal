@@ -412,14 +412,12 @@ class SFContact(SFObject):
                     "Id": g["Id"],
                     "Name": g["Name"],
                     "Leader": True,
-                    "Selected": False,
                 }
             else:
                 record = {
                     "Id": g["Life_Group__r"]["Id"],
                     "Name": g["Life_Group__r"]["Name"],
                     "Leader": g["Leader__c"],
-                    "Selected": False,
                 }
             records.append(record)
 
@@ -439,6 +437,28 @@ class SFContact(SFObject):
 
         members = []
         for t in teams["records"]:
+            members.append({
+                "Id": t["Contact__r"]["Id"],
+                "Name": t["Contact__r"]["Name"],
+                "Email": t["Contact__r"]["Email"],
+            })
+
+        return members
+
+    def small_group_members(self, small_group_id):
+        """
+        Get the members of the small group.
+        """
+        soql = """
+            select Contact__r.Id, Contact__r.Name, Contact__r.Email
+            from ContactLifeGroup__c
+            where Life_Group__r.Active__c=true
+            and Life_Group__r.Id = '%s'
+        """ % small_group_id
+        groups = self.connection.query(soql)
+
+        members = []
+        for t in groups["records"]:
             members.append({
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
