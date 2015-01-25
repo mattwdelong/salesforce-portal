@@ -28,6 +28,7 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Condensed:300' rel='stylesheet' type='text/css'>
     <link href="/static/css/custom/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/css/pikaday.css" rel="stylesheet">
     <link href="/static/css/custom/portal.css" rel="stylesheet">
     <script src="/static/js/dist/jquery.min.js"></script>
 </head>
@@ -48,6 +49,7 @@
           <ul class="nav navbar-nav">
             <li id="nav-home" data-toggle="collapse" data-target=".nav-collapse"><a href="/home">Home</a></li>
             <li id="nav-contact" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/contact">Contact</a></li>
+            <li id="nav-event" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/events">Events</a></li>
             <li data-toggle="collapse" data-target=".nav-collapse"><a href="https://accounts.google.com">{{ session.name }}</a></li>
           </ul>
         </div>
@@ -67,9 +69,13 @@
 {% include "handlebars/people.handlebars" %}
 {% include "handlebars/person.handlebars" %}
 {% include "handlebars/contact.handlebars" %}
+{% include "handlebars/events.handlebars" %}
+{% include "handlebars/event.handlebars" %}
 {% include "handlebars/error.handlebars" %}
 
     <script src="/static/js/dist/vendor.js"></script>
+    <script src="/static/js/dist/moment.min.js"></script>
+    <script src="/static/js/dist/pikaday.min.js"></script>
     <script src="/static/js/dist/handlebars.min.js"></script>
     <script src="/static/js/dist/ember.min.js"></script>
 

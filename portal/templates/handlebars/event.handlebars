@@ -1,0 +1,53 @@
+{% raw %}
+<script type="text/x-handlebars" data-template-name="event">
+<h2 class="sub-heading">Registration: {{ model.Name }}</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Select</h3></div>
+    <div class="panel-body">
+        <div class="col-lg-3">
+            <table class="layout">
+                <tr>
+                    <td class="layout-label">Date</td>
+                    <td>{{view App.CalendarDatePicker name=registration_date value=registration_date class="form-control" placeholder="registration_date" readonly="true" title="Click to enter the date"}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Status</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            {{#each status in status_options}}
+                                {{#if status.selected}}
+                                <button type="button" class="btn btn-primary" checked>{{status.name}}</button>
+                                {{else}}
+                                <button type="button" {{action 'setStatus' status}} class="btn btn-default">{{status.name}}</button>
+                                {{/if}}
+                            {{/each}}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-lg-9"></div>
+    </div>
+</div>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th><th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+    {{#each reg in model.registrations}}
+        <tr>
+            <td>{{reg.Name}}</td>
+            <td>{{reg.Status}}</td>
+        </tr>
+    {{/each}}
+        </tbody>
+    </table>
+</div>
+
+</script>
+{% endraw %}

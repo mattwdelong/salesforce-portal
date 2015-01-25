@@ -251,3 +251,30 @@ App.ContactController = Ember.ObjectController.extend({
         }
     }
 });
+
+
+App.EventController = Ember.ObjectController.extend({
+    registration_date: moment().format('YYYY-MM-DD'),
+    status_options: [{name:'Attended', selected: true},
+                     {name:'Signed-In', selected:false},
+                     {name:'Signed-Out', selected:false}],
+    status: 'Attended',
+
+    actions: {
+        setStatus: function(status) {
+            var options = []
+            var controller = this;
+            controller.set('status', status.name);
+            controller.get('status_options').forEach(function(st) {
+                if (controller.get('status') == st.name) {
+                    st.selected = true;
+                    options.push(st);
+                } else {
+                    st.selected = false;
+                    options.push(st);
+                }
+            });
+            controller.set('status_options', options);
+        }
+    }
+});

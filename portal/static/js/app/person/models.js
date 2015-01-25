@@ -27,6 +27,38 @@ Ember.Handlebars.registerBoundHelper('emailList', function(members) {
 });
 
 
+// Date picker widget for view
+App.CalendarDatePicker = Ember.TextField.extend({
+    _picker: null,
+
+    modelChangedValue: function(){
+        var picker = this.get("_picker");
+        if (picker){
+            picker.setDate(this.get("value"));
+        }
+    }.observes("value"),
+
+    didInsertElement: function(){
+        var currentYear = (new Date()).getFullYear();
+        var formElement = this.$()[0];
+        var picker = new Pikaday({
+            field: formElement,
+            yearRange: [1900,currentYear+2],
+            format: 'YYYY-MM-DD'
+        });
+        this.set("_picker", picker);
+    },
+
+    willDestroyElement: function(){
+        var picker = this.get("_picker");
+        if (picker) {
+            picker.destroy();
+        }
+        this.set("_picker", null);
+    }
+});
+
+
 App.Person = Ember.Object.extend({});
 
 App.Person.reopenClass({
@@ -137,4 +169,32 @@ App.Contact.reopenClass({
         });
     }
 
+});
+
+
+App.Event = Ember.Object.extend({});
+
+App.Event.reopenClass({
+    url: '/api/event',
+
+    all: function() {
+        return ajax(this.url, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    findById: function(modelId, registration_date) {
+        if (!registration_date) {
+            var d = new Date();
+            registration_date = d.toJSON().slice(0, 10);
+        }
+        return ajax(this.url + '/' + modelId + '/' + registration_date, {
+            type: 'GET',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    }
 });

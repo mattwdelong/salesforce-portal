@@ -1,0 +1,22 @@
+{% raw %}
+<script type="text/x-handlebars" data-template-name="events">
+<h2 class="sub-heading">Events</h2>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th><th>Type</th>
+        </tr>
+    </thead>
+    <tbody>
+{{#each e in model}}
+    <tr>
+        <td>{{#link-to 'event' e.Id}}{{e.Name}}{{/link-to}}</td>
+        <td>{{e.Type}}</td>
+    </tr>
+{{/each}}
+    </tbody>
+</table>
+</script>
+{% endraw %}

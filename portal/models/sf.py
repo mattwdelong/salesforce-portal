@@ -466,3 +466,53 @@ class SFContact(SFObject):
             })
 
         return members
+
+
+class SFEvent(SFObject):
+    def events(self):
+        """
+        Get the list of events.
+        """
+        # Get all the events
+        soql = """
+            select Id, Name, Type__c from Event__c
+            where Active__c=true
+            order by Name, Type__c
+        """
+        event_list = self.connection.query(soql)
+
+        records = []
+        for e in event_list["records"]:
+            records.append({
+                "Id": e["Id"],
+                "Name": e["Name"],
+                "Type": e["Type__c"],
+            })
+        return records
+
+    def event_by_id(self, event_id, event_date):
+        result = self.connection.Event__c.get(event_id)
+        records = self.registrations(event_id, event_date)
+
+        return result, records
+
+    def registrations(self, event_id, event_date):
+        """
+        Get all the registrations for an event.
+        """
+        soql = """
+            select Id, Contact__r.Name, Status__c from Registration__c
+            where Event_Date__c=%s
+            and Id='%s'
+            order by Contact__r.LastName, Contact__r.FirstName
+        """ % (event_date, event_id)
+        reg_list = self.connection.query(soql)
+
+        records = []
+        for r in reg_list["records"]:
+            records.append({
+                "Id": r["Id"],
+                "Name": r["Contact__r"]["Name"],
+                "Status": r["Status__c"],
+            })
+        return records

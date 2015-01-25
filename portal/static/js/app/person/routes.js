@@ -51,3 +51,19 @@ App.ContactRoute = Ember.Route.extend({
     }
 
 });
+
+App.EventsRoute = Ember.Route.extend({
+    model: function() {
+        return App.Event.all().then( function(data) {
+            return data.data;
+        });
+    }
+});
+
+App.EventRoute = Ember.Route.extend({
+    model: function(params) {
+        return App.Event.findById(params.Id).then( function(data) {
+            return data.data;
+        });
+    }
+});

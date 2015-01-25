@@ -1,6 +1,6 @@
 from flask import render_template, jsonify, request, session
 from portal import app
-from portal.models.sf import SFPerson, SFContact
+from portal.models.sf import SFPerson, SFContact, SFEvent
 from portal.authorize import login_required
 from portal.utils import is_testing
 
@@ -78,6 +78,7 @@ def api_person_small_group(contact_id, group_id):
 
 
 @app.route('/api/permissions', methods=['POST'])
+@login_required
 def api_permissions():
     """
     Get the permissions for the current user.
@@ -91,6 +92,7 @@ def api_permissions():
 
 
 @app.route('/api/contact/teams', methods=['POST'])
+@login_required
 def api_teams():
     """
     Get the teams, with the permissions of the ones that can be contacted.
@@ -104,6 +106,7 @@ def api_teams():
 
 
 @app.route('/api/contact', methods=['POST'])
+@login_required
 def api_contact():
     """
     Get the teams and small groups.
@@ -118,6 +121,7 @@ def api_contact():
 
 
 @app.route('/api/contact/teams/selected', methods=['POST'])
+@login_required
 def api_team_members():
     """
     Get the people in a team.
@@ -140,5 +144,26 @@ def api_team_members():
             if member not in members:
                 members.append(member)
 
-    app.logger.debug(members)
     return jsonify(response="Success", members=members)
+
+
+@app.route('/api/event', methods=['POST'])
+@login_required
+def api_event():
+    """
+    Get the events.
+    """
+    sf = SFEvent()
+    response = sf.events()
+
+    return jsonify(response="Success", data=response)
+
+
+@app.route('/api/event/<event_id>/<registration_date>')
+@login_required
+def api_event_get(event_id, registration_date):
+    sf = SFEvent()
+    event, registrations = sf.event_by_id(event_id, registration_date)
+    event["registrations"] = registrations
+    app.logger.debug(event)
+    return jsonify(response="Success", data=event)

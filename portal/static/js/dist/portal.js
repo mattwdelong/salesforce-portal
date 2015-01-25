@@ -9,6 +9,8 @@ App.Router.map(function() {
     this.resource('people', { path: '/people' });
     this.resource('person', { path: '/person/:Id' });
     this.resource('contact', { path: '/contact'});
+    this.resource('events', { path: '/events'});
+    this.resource('event', { path: '/event/:Id' });
 });
 
 ;App.PeopleController = Ember.ArrayController.extend({
@@ -264,6 +266,33 @@ App.ContactController = Ember.ObjectController.extend({
         }
     }
 });
+
+
+App.EventController = Ember.ObjectController.extend({
+    registration_date: moment().format('YYYY-MM-DD'),
+    status_options: [{name:'Attended', selected: true},
+                     {name:'Signed-In', selected:false},
+                     {name:'Signed-Out', selected:false}],
+    status: 'Attended',
+
+    actions: {
+        setStatus: function(status) {
+            var options = []
+            var controller = this;
+            controller.set('status', status.name);
+            controller.get('status_options').forEach(function(st) {
+                if (controller.get('status') == st.name) {
+                    st.selected = true;
+                    options.push(st);
+                } else {
+                    st.selected = false;
+                    options.push(st);
+                }
+            });
+            controller.set('status_options', options);
+        }
+    }
+});
 ;
 // Ajax wrapper that returns a promise
 function ajax (url, options) {
@@ -290,6 +319,38 @@ Ember.Handlebars.registerBoundHelper('emailList', function(members) {
     return members.map(function(item) {
         return item.Name + " <" + item.Email + ">";
     }).join(", ");
+});
+
+
+// Date picker widget for view
+App.CalendarDatePicker = Ember.TextField.extend({
+    _picker: null,
+
+    modelChangedValue: function(){
+        var picker = this.get("_picker");
+        if (picker){
+            picker.setDate(this.get("value"));
+        }
+    }.observes("value"),
+
+    didInsertElement: function(){
+        var currentYear = (new Date()).getFullYear();
+        var formElement = this.$()[0];
+        var picker = new Pikaday({
+            field: formElement,
+            yearRange: [1900,currentYear+2],
+            format: 'YYYY-MM-DD'
+        });
+        this.set("_picker", picker);
+    },
+
+    willDestroyElement: function(){
+        var picker = this.get("_picker");
+        if (picker) {
+            picker.destroy();
+        }
+        this.set("_picker", null);
+    }
 });
 
 
@@ -404,6 +465,34 @@ App.Contact.reopenClass({
     }
 
 });
+
+
+App.Event = Ember.Object.extend({});
+
+App.Event.reopenClass({
+    url: '/api/event',
+
+    all: function() {
+        return ajax(this.url, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    findById: function(modelId, registration_date) {
+        if (!registration_date) {
+            var d = new Date();
+            registration_date = d.toJSON().slice(0, 10);
+        }
+        return ajax(this.url + '/' + modelId + '/' + registration_date, {
+            type: 'GET',
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    }
+});
 ;App.IndexRoute = Ember.Route.extend({
     beforeModel: function() {
         this.transitionTo('people');
@@ -456,4 +545,20 @@ App.ContactRoute = Ember.Route.extend({
         controller.reset();
     }
 
+});
+
+App.EventsRoute = Ember.Route.extend({
+    model: function() {
+        return App.Event.all().then( function(data) {
+            return data.data;
+        });
+    }
+});
+
+App.EventRoute = Ember.Route.extend({
+    model: function(params) {
+        return App.Event.findById(params.Id).then( function(data) {
+            return data.data;
+        });
+    }
 });
