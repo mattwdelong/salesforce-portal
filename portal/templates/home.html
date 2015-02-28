@@ -66,18 +66,13 @@
 {% endraw %}
     {{ request.args.get('testing') }}
 
-{% include "handlebars/people.handlebars" %}
-{% include "handlebars/person.handlebars" %}
-{% include "handlebars/contact.handlebars" %}
-{% include "handlebars/events.handlebars" %}
-{% include "handlebars/event.handlebars" %}
-{% include "handlebars/error.handlebars" %}
+
 
     <script src="/static/js/dist/vendor.js"></script>
     <script src="/static/js/dist/moment.min.js"></script>
     <script src="/static/js/dist/pikaday.min.js"></script>
-    <script src="/static/js/dist/handlebars.min.js"></script>
-    <script src="/static/js/dist/ember.min.js"></script>
+    <script src="/static/js/dist/ember-template-compiler.js"></script>
+    <script src="/static/js/dist/ember.prod.js"></script>
 
     {%  if request.args.get('testing') %}
     <div id="qunit"></div>
@@ -88,6 +83,7 @@
     <script src="/static/js/dist/portal.js"></script>
     <script src="/static/js/test/test.js"></script>
     {% else %}
+    <script src="/static/js/dist/templates.min.js"></script>
     <script src="/static/js/dist/portal.js"></script>
     {% endif %}
 

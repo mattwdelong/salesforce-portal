@@ -1,5 +1,3 @@
-{% raw %}
-<script type="text/x-handlebars" data-template-name="event">
 <h2 class="sub-heading">Registration: {{ model.Name }}</h2>
 
 <div class="panel panel-default">
@@ -39,7 +37,7 @@
             </tr>
         </thead>
         <tbody>
-    {{#each reg in model.registrations}}
+    {{#each reg in filteredRegistrations}}
         <tr>
             <td>{{reg.Name}}</td>
             <td>{{reg.Status}}</td>
@@ -48,6 +46,3 @@
         </tbody>
     </table>
 </div>
-
-</script>
-{% endraw %}

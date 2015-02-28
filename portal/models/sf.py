@@ -493,6 +493,9 @@ class SFEvent(SFObject):
     def event_by_id(self, event_id, event_date):
         result = self.connection.Event__c.get(event_id)
         records = self.registrations(event_id, event_date)
+        app.logger.debug(event_id)
+        app.logger.debug(event_date)
+        app.logger.debug(records)
 
         return result, records
 
@@ -503,7 +506,7 @@ class SFEvent(SFObject):
         soql = """
             select Id, Contact__r.Name, Status__c from Registration__c
             where Event_Date__c=%s
-            and Id='%s'
+            and Event__c='%s'
             order by Contact__r.LastName, Contact__r.FirstName
         """ % (event_date, event_id)
         reg_list = self.connection.query(soql)

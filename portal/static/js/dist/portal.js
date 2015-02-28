@@ -270,10 +270,33 @@ App.ContactController = Ember.ObjectController.extend({
 
 App.EventController = Ember.ObjectController.extend({
     registration_date: moment().format('YYYY-MM-DD'),
-    status_options: [{name:'Attended', selected: true},
+    registrations: [],
+    status_options: [{name:'ALL', selected: true},
+                     {name:'Attended', selected: false},
                      {name:'Signed-In', selected:false},
                      {name:'Signed-Out', selected:false}],
-    status: 'Attended',
+    status: null,
+
+    getRegistrations: function() {
+        var controller = this;
+        App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
+            controller.set('registrations', data.data.registrations);
+            controller.set('status', 'ALL');
+        });
+    }.observes("registration_date"),
+
+    filteredRegistrations: function() {
+        var status =  this.get('status');
+        if (status == 'ALL') {
+            return this.get('registrations');
+        }
+
+        var rx = new RegExp(status, 'gi');
+        return this.get('registrations').filter(function(r) {
+            return r.Status.match(rx);
+        });
+
+    }.property('arrangedContent', "status"),
 
     actions: {
         setStatus: function(status) {
@@ -291,6 +314,7 @@ App.EventController = Ember.ObjectController.extend({
             });
             controller.set('status_options', options);
         }
+
     }
 });
 ;
@@ -490,7 +514,7 @@ App.Event.reopenClass({
             type: 'GET',
             contentType: "application/json; charset=utf-8",
             dataType: "json"
-        });
+        })
     }
 });
 ;App.IndexRoute = Ember.Route.extend({
