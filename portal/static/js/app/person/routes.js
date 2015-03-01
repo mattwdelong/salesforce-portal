@@ -65,5 +65,10 @@ App.EventRoute = Ember.Route.extend({
         return App.Event.findById(params.Id).then( function(data) {
             return data.data;
         });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup EventRoute");
+        controller.set('content', model);
     }
 });

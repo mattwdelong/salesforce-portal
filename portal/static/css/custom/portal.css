@@ -8,6 +8,10 @@ table.layout td.layout-label {
     color: #999;
 }
 
+.layout-highlight {
+    font-weight: bold;
+    font-size: 48px;
+}
 
 /* Branding */
 body {

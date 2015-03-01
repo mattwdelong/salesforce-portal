@@ -3,7 +3,7 @@
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Select</h3></div>
     <div class="panel-body">
-        <div class="col-lg-3">
+        <div class="col-lg-9">
             <table class="layout">
                 <tr>
                     <td class="layout-label">Date</td>
@@ -11,7 +11,7 @@
                 </tr>
                 <tr>
                     <td class="layout-label">Status</td>
-                    <td>
+                    <td class="layout-filter">
                         <div class="btn-group" role="group">
                             {{#each status in status_options}}
                                 {{#if status.selected}}
@@ -25,7 +25,9 @@
                 </tr>
             </table>
         </div>
-        <div class="col-lg-9"></div>
+        <div class="col-lg-3">
+            <span class="layout-highlight">{{filteredCount}}</span>
+        </div>
     </div>
 </div>
 

@@ -255,32 +255,43 @@ App.ContactController = Ember.ObjectController.extend({
 
 App.EventController = Ember.ObjectController.extend({
     registration_date: moment().format('YYYY-MM-DD'),
-    registrations: [],
     status_options: [{name:'ALL', selected: true},
                      {name:'Attended', selected: false},
                      {name:'Signed-In', selected:false},
                      {name:'Signed-Out', selected:false}],
-    status: null,
+    status: 'ALL',
+    filteredCount: 0,
+
+    reset: function() {
+        this.set('status', null);
+        this.set('status', 'ALL');
+        this.set('filteredCount', this.get('model').registrations.length);
+    }.observes('model.registrations'),
 
     getRegistrations: function() {
         var controller = this;
         App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
-            controller.set('registrations', data.data.registrations);
-            controller.set('status', 'ALL');
+            controller.set('model.registrations', data.data.registrations);
         });
     }.observes("registration_date"),
 
-    filteredRegistrations: function() {
+    filter: function() {
         var status =  this.get('status');
         if (status == 'ALL') {
-            return this.get('registrations');
+            return this.get('model.registrations');
         }
 
         var rx = new RegExp(status, 'gi');
-        return this.get('registrations').filter(function(r) {
+        var filtered = this.get('model.registrations').filter(function(r) {
             return r.Status.match(rx);
         });
 
+        this.set('filteredCount', filtered.length);
+        return filtered;
+    },
+
+    filteredRegistrations: function() {
+        return this.filter();
     }.property('arrangedContent', "status"),
 
     actions: {
