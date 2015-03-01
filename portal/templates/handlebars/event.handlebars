@@ -1,4 +1,5 @@
 <h2 class="sub-heading">Registration: {{ model.Name }}</h2>
+<h3>{{model.Type__c}}</h3>
 
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Select</h3></div>
@@ -23,6 +24,30 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <td class="layout-label">Groups</td>
+                    <td class="layout-filter">
+                        <div class="btn-group" role="group">
+                            {{# if isKidswork}}
+                                {{#each opt in kids_options}}
+                                    {{#if opt.selected}}
+                                    <button type="button" class="btn btn-primary" checked>{{opt.name}}</button>
+                                    {{else}}
+                                    <button type="button" {{action 'setKidsGroup' opt}} class="btn btn-default">{{opt.name}}</button>
+                                    {{/if}}
+                                {{/each}}
+                            {{else}}
+                                {{#each opt in type_options}}
+                                    {{#if opt.selected}}
+                                    <button type="button" class="btn btn-primary" checked>{{opt.name}}</button>
+                                    {{else}}
+                                    <button type="button" {{action 'setTypeGroup' opt}} class="btn btn-default">{{opt.name}}</button>
+                                    {{/if}}
+                                {{/each}}
+                            {{/if}}
+                        </div>
+                    </td>
+                </tr>
             </table>
         </div>
         <div class="col-lg-3">
@@ -36,6 +61,11 @@
         <thead>
             <tr>
                 <th>Name</th><th>Status</th>
+                {{#if isKidswork }}
+                    <th>Group</th><th>Tag</th><th>Family Tag</th><th>Parents</th>
+                {{else}}
+                    <th>Type</th>
+                {{/if}}
             </tr>
         </thead>
         <tbody>
@@ -43,6 +73,14 @@
         <tr>
             <td>{{reg.Name}}</td>
             <td>{{reg.Status}}</td>
+            {{#if isKidswork }}
+                <td>{{reg.KidsGroup}}</td>
+                <td>{{reg.ChildTag}}</td>
+                <td>{{reg.FamilyTag}}</td>
+                <td>{{reg.ParentNames}}</td>
+            {{else}}
+                <td>{{reg.Type}}</td>
+            {{/if}}
         </tr>
     {{/each}}
         </tbody>
