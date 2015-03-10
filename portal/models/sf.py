@@ -8,7 +8,8 @@ from portal import app
 FIELDS = """Id, Name, FirstName, LastName, Email, Contact_Type__c, HomePhone,
             MobilePhone, Phone, MailingStreet, MailingCity, MailingPostalCode,
             Gender__c, Marital_Status__c, Salvation__c, IsBaptised__c,
-            RecordType.Name, isKeyLeader__c, Partner__c"""
+            RecordType.Name, Partner__c, DepartmentCoordinator__c,
+            SeniorManagement__c, Governance__c"""
 
 
 class SFObject(object):
@@ -69,8 +70,9 @@ class SFPerson(SFObject):
             session['user_id'])
         manageable_teams = [t["team_id"] for t in manageable_teams if t["access_manage"]]
         teams = self.person_team_serving(sf_id, manageable_teams)
+        core_teams = self.person_core_team_serving(sf_id, manageable_teams)
 
-        return result, small_groups, teams, team_permissions
+        return result, small_groups, teams, team_permissions, core_teams
 
     def person_small_groups(self, sf_id):
         """
@@ -134,6 +136,41 @@ class SFPerson(SFObject):
         in_teams = self.connection.query("""
               select Id, Name, Team__r.Id, Access__c
               from ContactTeamLink__c
+              where Team__r.IsActive__c=true
+              and Contact__c='%s'""" % sf_id)
+
+        team_list = []
+        for ts in teams["records"]:
+            team = {
+                "team_id": ts["Id"],
+                "team_name": ts["Name"],
+                "in_team": False,
+                "access_contact": False,
+                "access_manage": False,
+            }
+            for ct in in_teams["records"]:
+                if ts["Id"] == ct["Team__r"]["Id"]:
+                    team["in_team"] = True
+                    if ct["Team__r"]["Id"] in manageable_teams:
+                        team["access_manage"] = True
+            team_list.append(team)
+
+        return team_list
+
+    def person_core_team_serving(self, sf_id, manageable_teams):
+        """
+        Get the core teams that a person is serving in and identify the ones
+        that the user has permissions to manage.
+        """
+        # Full list of active teams
+        teams = self.connection.query("""
+              select Id, Name from Team__c
+              where IsActive__c=true
+              order by Name""")
+
+        in_teams = self.connection.query("""
+              select Id, Name, Team__r.Id
+              from ContactCoreTeamLink__c
               where Team__r.IsActive__c=true
               and Contact__c='%s'""" % sf_id)
 
@@ -223,6 +260,41 @@ class SFPerson(SFObject):
                 "Access__c": "",
             }
             self.connection.ContactTeamLink__c.create(sf_record)
+            team["access"] = True
+
+        return team
+
+    def person_core_team_serving_update(self, contact_id, team_id):
+        """
+        Toggle the access and membership of a core team.
+        None => Member => ...
+        """
+        team = {
+            "in_team": True,
+            "access_contact": False,
+            "access_manage": False
+        }
+
+        # Get the current team membership
+        in_team = self.connection.query("""
+              select Id, Name, Team__r.Id
+              from ContactCoreTeamLink__c
+              where Team__r.IsActive__c=true
+              and Contact__c='%s' and Team__r.Id='%s'""" %
+                                        (contact_id, team_id))
+
+        if len(in_team["records"]) > 0:
+            membership = in_team["records"][0]
+            # Remove membership
+            self.connection.ContactCoreTeamLink__c.delete(membership["Id"])
+            team["in_team"] = False
+        else:
+            # Add membership
+            sf_record = {
+                'Contact__c': contact_id,
+                'Team__c': team_id,
+            }
+            self.connection.ContactCoreTeamLink__c.create(sf_record)
             team["access"] = True
 
         return team
@@ -430,6 +502,28 @@ class SFContact(SFObject):
         soql = """
             select Contact__r.Id, Contact__r.Name, Contact__r.Email
             from ContactTeamLink__c
+            where Team__r.IsActive__c=true
+            and Team__r.Id = '%s'
+        """ % team_id
+        teams = self.connection.query(soql)
+
+        members = []
+        for t in teams["records"]:
+            members.append({
+                "Id": t["Contact__r"]["Id"],
+                "Name": t["Contact__r"]["Name"],
+                "Email": t["Contact__r"]["Email"],
+            })
+
+        return members
+
+    def core_team_members(self, team_id):
+        """
+        Get the members of the core team.
+        """
+        soql = """
+            select Contact__r.Id, Contact__r.Name, Contact__r.Email
+            from ContactCoreTeamLink__c
             where Team__r.IsActive__c=true
             and Team__r.Id = '%s'
         """ % team_id

@@ -104,6 +104,15 @@ App.Person.reopenClass({
         });
     },
 
+    updateCoreTeam: function(contactId, teamId) {
+        return ajax(this.url + '/' + contactId + '/core_team/' + teamId, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
     updateTeamPermissions: function(contactId, teamId) {
         return ajax(this.url + '/' + contactId + '/team_permissions/' + teamId, {
             type: 'POST',

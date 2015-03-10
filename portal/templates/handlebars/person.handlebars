@@ -63,8 +63,16 @@
                     <td>{{#if model.Partner__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
                 </tr>
                 <tr>
-                    <td class="layout-label">Key Leader</td>
-                    <td>{{#if model.isKeyLeader__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                    <td class="layout-label">Dept. Coordinator</td>
+                    <td>{{#if model.DepartmentCoordinator__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Senior Management</td>
+                    <td>{{#if model.SeniorManagement__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Governance</td>
+                    <td>{{#if model.Governance__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
                 </tr>
             </table>
         </div>
@@ -121,6 +129,35 @@
                     {{else}}
                         {{#if isAdmin}}
                             <button {{action 'toggleTeam' ts}}>{{ ts.team_name }}</button>
+                        {{/if}}
+                    {{/if}}
+                {{/if}}
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Core Teams</h3></div>
+    <div class="panel-body">
+        <div class="col-lg-12">
+            {{#each ts in model.core_teams}}
+                {{#if ts.in_team}}
+                    {{#if ts.access_manage}}
+                        <button {{action 'toggleCoreTeam' ts}} class="btn btn-primary">{{ ts.team_name }}</button>
+                    {{else}}
+                        {{#if isAdmin}}
+                            <button {{action 'toggleCoreTeam' ts}} class="btn btn-primary">{{ ts.team_name }}</button>
+                        {{else}}
+                            <label class="label label-primary">{{ ts.team_name }}</label>
+                        {{/if}}
+                    {{/if}}
+                {{else}}
+                    {{#if ts.access_manage}}
+                        <button {{action 'toggleCoreTeam' ts}}>{{ ts.team_name }}</button>
+                    {{else}}
+                        {{#if isAdmin}}
+                            <button {{action 'toggleCoreTeam' ts}}>{{ ts.team_name }}</button>
                         {{/if}}
                     {{/if}}
                 {{/if}}

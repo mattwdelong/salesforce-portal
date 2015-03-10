@@ -45,9 +45,11 @@ def api_people_find():
 @login_required
 def api_person_get(contact_id):
     sf = SFPerson()
-    contact, small_groups, teams, team_permissions = sf.person_by_id(contact_id)
+    contact, small_groups, teams, team_permissions, core_teams = \
+        sf.person_by_id(contact_id)
     contact['small_groups'] = small_groups
     contact['team_serving'] = teams
+    contact['core_teams'] = core_teams
     contact['team_permissions'] = team_permissions
 
     return jsonify(response="Success", person=contact)
@@ -60,6 +62,12 @@ def api_person_team(contact_id, team_id):
     team = sf.person_team_serving_update(contact_id, team_id)
     return jsonify(response="Success", team=team)
 
+@app.route('/api/people/<contact_id>/core_team/<team_id>', methods=['POST'])
+@login_required
+def api_person_core_team(contact_id, team_id):
+    sf = SFPerson()
+    team = sf.person_core_team_serving_update(contact_id, team_id)
+    return jsonify(response="Success", team=team)
 
 @app.route('/api/people/<contact_id>/team_permissions/<team_id>', methods=['POST'])
 @login_required
@@ -134,6 +142,12 @@ def api_team_members():
     sf = SFContact()
     for t in team_ids:
         team_members = sf.team_members(t)
+        for member in team_members:
+            if member not in members:
+                members.append(member)
+
+    for t in team_ids:
+        team_members = sf.core_team_members(t)
         for member in team_members:
             if member not in members:
                 members.append(member)

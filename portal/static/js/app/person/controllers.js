@@ -91,6 +91,31 @@ App.PersonController = Ember.ObjectController.extend({
             });
         }.observes('team_serving'),
 
+        toggleCoreTeam: function(team) {
+            // Toggle the core team membership
+            var teams = [];
+            var controller = this;
+
+            App.Person.updateCoreTeam(
+                this.get("model").Id, team.team_id).then(function(data) {
+                team.in_team = data.team.in_team;
+                team.access_manage =  data.team.access_manage;
+                team.access_contact =  data.team.access_contact;
+
+                // Update the view
+                controller.get("model").core_teams.forEach(function (t) {
+                    if (t.team_id==team.team_id) {
+                        teams.push(team);
+                    } else {
+                        teams.push(t);
+                    }
+                });
+                controller.get("model").core_teams.setObjects(teams);
+            }).catch(function(error) {
+                controller.set('error', error.message);
+            });
+        }.observes('core_teams'),
+
         toggleSmallGroup: function(sg) {
             // Toggle the small group membership
             var groups = [];
