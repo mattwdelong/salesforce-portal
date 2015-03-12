@@ -9,7 +9,7 @@ FIELDS = """Id, Name, FirstName, LastName, Email, Contact_Type__c, HomePhone,
             MobilePhone, Phone, MailingStreet, MailingCity, MailingPostalCode,
             Gender__c, Marital_Status__c, Salvation__c, IsBaptised__c,
             RecordType.Name, Partner__c, DepartmentCoordinator__c,
-            SeniorManagement__c, Governance__c"""
+            SeniorManagement__c, GovernanceElder__c, GovernanceTrustee__c"""
 
 
 class SFObject(object):
