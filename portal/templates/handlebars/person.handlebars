@@ -60,19 +60,68 @@
                 </tr>
                 <tr>
                     <td class="layout-label">Partner</td>
-                    <td>{{#if model.Partner__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                    <td>
+                        {{#if model.Partner__c}}
+                            <span class="glyphicon glyphicon-ok"></span>
+                        {{else}}
+                            <span class="glyphicon glyphicon-remove"></span>
+                        {{/if}}
+                        {{#if isLeader}}
+                            &nbsp;<button class="btn btn-primary" {{action 'toggleCheckbox' model 'Partner__c'}}>Change</button>
+                        {{/if}}
+                    </td>
                 </tr>
                 <tr>
                     <td class="layout-label">Dept. Coordinator</td>
-                    <td>{{#if model.DepartmentCoordinator__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                    <td>
+                        {{#if model.DepartmentCoordinator__c}}
+                            <span class="glyphicon glyphicon-ok"></span>
+                        {{else}}
+                            <span class="glyphicon glyphicon-remove"></span>
+                        {{/if}}
+                        {{#if isLeader}}
+                            &nbsp;<button class="btn btn-primary" {{action 'toggleCheckbox' model 'DepartmentCoordinator__c'}}>Change</button>
+                        {{/if}}
+                    </td>
                 </tr>
                 <tr>
                     <td class="layout-label">Senior Management</td>
-                    <td>{{#if model.SeniorManagement__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                    <td>
+                        {{#if model.SeniorManagement__c}}
+                            <span class="glyphicon glyphicon-ok"></span>
+                        {{else}}
+                            <span class="glyphicon glyphicon-remove"></span>
+                        {{/if}}
+                        {{#if isLeader}}
+                            &nbsp;<button class="btn btn-primary" {{action 'toggleCheckbox' model 'SeniorManagement__c'}}>Change</button>
+                        {{/if}}
+                    </td>
                 </tr>
                 <tr>
-                    <td class="layout-label">Governance</td>
-                    <td>{{#if model.Governance__c}}<span class="glyphicon glyphicon-ok"></span>{{/if}}</td>
+                    <td class="layout-label">Elder</td>
+                    <td>
+                        {{#if model.GovernanceElder__c}}
+                            <span class="glyphicon glyphicon-ok"></span>
+                        {{else}}
+                            <span class="glyphicon glyphicon-remove"></span>
+                        {{/if}}
+                        {{#if isLeader}}
+                            &nbsp;<button class="btn btn-primary" {{action 'toggleCheckbox' model 'GovernanceElder__c'}}>Change</button>
+                        {{/if}}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Trustee</td>
+                    <td>
+                        {{#if model.GovernanceTrustee__c}}
+                            <span class="glyphicon glyphicon-ok"></span>
+                        {{else}}
+                            <span class="glyphicon glyphicon-remove"></span>
+                        {{/if}}
+                        {{#if isLeader}}
+                            &nbsp;<button class="btn btn-primary" {{action 'toggleCheckbox' model 'GovernanceTrustee__c'}}>Change</button>
+                        {{/if}}
+                    </td>
                 </tr>
             </table>
         </div>

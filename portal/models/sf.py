@@ -166,12 +166,14 @@ class SFPerson(SFObject):
         teams = self.connection.query("""
               select Id, Name from Team__c
               where IsActive__c=true
+              and HasCoreTeam__c=true
               order by Name""")
 
         in_teams = self.connection.query("""
               select Id, Name, Team__r.Id
               from ContactCoreTeamLink__c
               where Team__r.IsActive__c=true
+              and Team__r.HasCoreTeam__c=true
               and Contact__c='%s'""" % sf_id)
 
         team_list = []
@@ -416,6 +418,15 @@ class SFPerson(SFObject):
             user_id,
             {"Portal_Last_Login__c": now.strftime("%Y-%m-%dT%H:%M:%S")})
 
+    def toggle_field(self, contact_id, field):
+        """
+        Toggle the value of a checkbox.
+        """
+        person = self.connection.Contact.get(contact_id)
+        sf_record = {
+            field: not person[field]
+        }
+        self.connection.Contact.update(contact_id, sf_record)
 
 class SFContact(SFObject):
     def teams(self):

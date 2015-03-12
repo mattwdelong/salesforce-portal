@@ -85,6 +85,13 @@ def api_person_small_group(contact_id, group_id):
     return jsonify(response="Success", small_group=small_group)
 
 
+@app.route('/api/people/<contact_id>/toggle', methods=['POST'])
+@login_required
+def api_person_toggle_field(contact_id):
+    sf = SFPerson()
+    person = sf.toggle_field(contact_id, request.json["field"])
+    return jsonify(response="Success")
+
 @app.route('/api/permissions', methods=['POST'])
 @login_required
 def api_permissions():

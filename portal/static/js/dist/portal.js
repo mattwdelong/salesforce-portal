@@ -299,6 +299,7 @@ App.Router.map(function() {
 App.PersonController = Ember.ObjectController.extend({
 
     isAdmin: false,
+    isLeader: false,
 
     getPermissions: function() {
         var controller = this;
@@ -306,12 +307,17 @@ App.PersonController = Ember.ObjectController.extend({
             controller.set('permissions', result.permissions);
 
             var isAdmin = false;
+            var isLeader = false;
             if (controller.get("permissions")) {
                 if (controller.get("permissions").role=="Admin") {
                     isAdmin = true;
+                    isLeader = true;
+                } else if (controller.get("permissions").role=="Leader") {
+                    isLeader = true;
                 }
             }
             controller.set('isAdmin', isAdmin);
+            controller.set('isLeader', isLeader);
         });
     },
 
@@ -413,7 +419,14 @@ App.PersonController = Ember.ObjectController.extend({
             }).catch(function(error) {
                 controller.set('error', error.message);
             });
-        }.observes('team_permissions')
+        }.observes('team_permissions'),
+
+        toggleCheckbox: function(model, field) {
+            // Toggle the department coordinator flag
+            var value = !this.get('model')[field];
+            App.Person.toggleCheckbox(model.Id, field);
+            this.set('model.' + field, value);
+        }
     }
 });
 ;
@@ -544,6 +557,15 @@ App.Person.reopenClass({
         return ajax(this.url + '/' + contactId + '/small_group/' + groupId, {
             type: 'POST',
             data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    toggleCheckbox: function(contactId, field) {
+        return ajax(this.url + '/' + contactId + '/toggle', {
+            type: 'POST',
+            data: JSON.stringify({field: field}),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         });

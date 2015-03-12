@@ -131,6 +131,15 @@ App.Person.reopenClass({
         });
     },
 
+    toggleCheckbox: function(contactId, field) {
+        return ajax(this.url + '/' + contactId + '/toggle', {
+            type: 'POST',
+            data: JSON.stringify({field: field}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
     permissions: function() {
         return ajax('/api/permissions', {
             type: 'POST',
