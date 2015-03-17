@@ -1,4 +1,4 @@
-table.layout {
+table.layout, table.results {
     width: 100%;
 }
 
@@ -11,6 +11,39 @@ table.layout td.layout-label {
 .layout-highlight {
     font-weight: bold;
     font-size: 48px;
+}
+
+table.results {
+    margin-top: 20px;
+}
+
+table.results th {
+    border-bottom: solid 1px #cccccc;
+}
+
+table.results td {
+    border-bottom: solid 1px #eeeeee;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+table.results td.small, table.results th.small {
+    width: 30px;
+    padding-right: 5px;
+    border: None;
+}
+
+table.results tr.signed-out td {
+    color: #cccccc;
+}
+
+table.results tr.signed-out td a {
+    color: #808080;
+}
+
+
+.cell-center {
+    text-align: center;
 }
 
 /* Branding */

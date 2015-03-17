@@ -72,3 +72,16 @@ App.EventRoute = Ember.Route.extend({
         controller.set('content', model);
     }
 });
+
+App.EventKidsworkRoute = Ember.Route.extend({
+    model: function(params) {
+        return App.Event.findById(params.Id).then( function(data) {
+            return data.data;
+        });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup EventKidsworkRoute");
+        controller.set('content', model);
+    }
+});

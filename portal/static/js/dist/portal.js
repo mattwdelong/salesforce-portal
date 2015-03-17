@@ -10,6 +10,7 @@ App.Router.map(function() {
     this.resource('person', { path: '/person/:Id' });
     this.resource('contact', { path: '/contact'});
     this.resource('events', { path: '/events'});
+    this.resource('event_kidswork', { path: '/event/:Id/kidswork' });
     this.resource('event', { path: '/event/:Id' });
 });
 
@@ -245,6 +246,45 @@ App.Router.map(function() {
             this.set('type', opt.name);
             var options =  this.setOption(opt, 'type', 'type_options');
             this.set('type_options', options);
+        }
+    }
+});
+
+
+App.EventKidsworkController = Ember.ObjectController.extend({
+    registration_date: moment().format('YYYY-MM-DD'),
+    searchResults: [{Name: 'Jack Wattis'}],
+
+    getRegistrations: function() {
+        var controller = this;
+        App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
+            controller.set('model', data.data);
+            controller.set('model.registrations', data.data.registrations);
+        });
+    }.observes("registration_date"),
+
+    findPeople: function() {
+        // Only perform the search if a name is entered
+        var name = this.get('find_name');
+        if (name) {
+            name = name.replace(/^\s+|\s+$/g,'');
+            if (name.length == 0) {
+                return;
+            }
+        } else {
+            return;
+        }
+
+        var controller = this;
+        App.Event.findPerson(controller.get("model").Id, controller.get("registration_date"),
+            controller.get("model").Type__c, name).then(function(data) {
+                controller.set('searchResults', data.data.records);
+        });
+    },
+
+    actions: {
+        findPeople: function () {
+            this.findPeople();
         }
     }
 });
@@ -645,6 +685,18 @@ App.Event.reopenClass({
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         })
+    },
+
+    findPerson: function(modelId, registration_date, type, find_name) {
+        return ajax(this.url + '/' + modelId + '/' + registration_date + '/find_person', {
+            type: 'POST',
+            data: JSON.stringify({
+                find_name: find_name,
+                type: type
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        })
     }
 });
 ;App.IndexRoute = Ember.Route.extend({
@@ -718,6 +770,19 @@ App.EventRoute = Ember.Route.extend({
 
     setupController: function(controller, model) {
         console.log("Setup EventRoute");
+        controller.set('content', model);
+    }
+});
+
+App.EventKidsworkRoute = Ember.Route.extend({
+    model: function(params) {
+        return App.Event.findById(params.Id).then( function(data) {
+            return data.data;
+        });
+    },
+
+    setupController: function(controller, model) {
+        console.log("Setup EventKidsworkRoute");
         controller.set('content', model);
     }
 });

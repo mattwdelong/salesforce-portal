@@ -214,5 +214,17 @@ App.Event.reopenClass({
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         })
+    },
+
+    findPerson: function(modelId, registration_date, type, find_name) {
+        return ajax(this.url + '/' + modelId + '/' + registration_date + '/find_person', {
+            type: 'POST',
+            data: JSON.stringify({
+                find_name: find_name,
+                type: type
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        })
     }
 });

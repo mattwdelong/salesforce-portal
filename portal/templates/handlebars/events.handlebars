@@ -10,7 +10,13 @@
     <tbody>
 {{#each e in model}}
     <tr>
-        <td>{{#link-to 'event' e.Id}}{{e.Name}}{{/link-to}}</td>
+        <td>
+            {{#if e.Kidswork}}
+                {{#link-to 'event_kidswork' e.Id}}{{e.Name}}{{/link-to}}
+            {{else}}
+                {{#link-to 'event' e.Id}}{{e.Name}}{{/link-to}}
+            {{/if}}
+        </td>
         <td>{{e.Type}}</td>
     </tr>
 {{/each}}

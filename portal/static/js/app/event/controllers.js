@@ -124,3 +124,42 @@ App.EventController = Ember.ObjectController.extend({
         }
     }
 });
+
+
+App.EventKidsworkController = Ember.ObjectController.extend({
+    registration_date: moment().format('YYYY-MM-DD'),
+    searchResults: [{Name: 'Jack Wattis'}],
+
+    getRegistrations: function() {
+        var controller = this;
+        App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
+            controller.set('model', data.data);
+            controller.set('model.registrations', data.data.registrations);
+        });
+    }.observes("registration_date"),
+
+    findPeople: function() {
+        // Only perform the search if a name is entered
+        var name = this.get('find_name');
+        if (name) {
+            name = name.replace(/^\s+|\s+$/g,'');
+            if (name.length == 0) {
+                return;
+            }
+        } else {
+            return;
+        }
+
+        var controller = this;
+        App.Event.findPerson(controller.get("model").Id, controller.get("registration_date"),
+            controller.get("model").Type__c, name).then(function(data) {
+                controller.set('searchResults', data.data.records);
+        });
+    },
+
+    actions: {
+        findPeople: function () {
+            this.findPeople();
+        }
+    }
+});

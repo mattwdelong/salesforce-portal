@@ -9,7 +9,8 @@ FIELDS = """Id, Name, FirstName, LastName, Email, Contact_Type__c, HomePhone,
             MobilePhone, Phone, MailingStreet, MailingCity, MailingPostalCode,
             Gender__c, Marital_Status__c, Salvation__c, IsBaptised__c,
             RecordType.Name, Partner__c, DepartmentCoordinator__c,
-            SeniorManagement__c, GovernanceElder__c, GovernanceTrustee__c"""
+            SeniorManagement__c, GovernanceElder__c, GovernanceTrustee__c,
+            Kids_Group__c, Child_Tag_Number__c, Family_Tag__c, Parent_Name__c"""
 
 
 class SFObject(object):
@@ -592,15 +593,13 @@ class SFEvent(SFObject):
                 "Id": e["Id"],
                 "Name": e["Name"],
                 "Type": e["Type__c"],
+                "Kidswork": True if e["Type__c"] == "Kidswork" else False,
             })
         return records
 
     def event_by_id(self, event_id, event_date):
         result = self.connection.Event__c.get(event_id)
         records = self.registrations(event_id, event_date)
-        app.logger.debug(event_id)
-        app.logger.debug(event_date)
-        app.logger.debug(records)
 
         return result, records
 
@@ -625,10 +624,40 @@ class SFEvent(SFObject):
                 "Id": r["Id"],
                 "Name": r["Contact__r"]["Name"],
                 "Status": r["Status__c"],
+                "SignedOut":
+                    'class="signed-out"' if r["Status__c"] == "Signed-Out"
+                    else "",
                 "Type": r["Contact__r"]["Contact_Type__c"],
                 "KidsGroup": r["Contact__r"]["Kids_Group__c"],
+                "isPrimary":
+                    True if r["Contact__r"]["Kids_Group__c"] == "Primary"
+                    else False,
+                "isPreschool":
+                    True if r["Contact__r"]["Kids_Group__c"] == "Preschool"
+                    else False,
                 "ChildTag": r["Contact__r"]["Child_Tag_Number__c"],
                 "FamilyTag": r["Contact__r"]["Family_Tag__c"],
                 "ParentNames": r["Contact__r"]["Parent_Name__c"],
             })
         return records
+
+    def find_person(self, name=None, tag=None, event_type=None):
+        """
+        Search for person by name or family tag.
+        """
+        if name:
+            condition = "name like '%%%s%%'" % name
+        else:
+            condition = "Family_Tag__c = %d" % tag
+
+        if event_type == "Kidswork":
+            condition += " and Child_Tag_Number__c>0"
+
+        soql = """
+            select %s
+            from Contact
+            where %s
+            order by lastName, firstName
+        """ % (FIELDS, condition)
+        results = self.connection.query(soql)
+        return results

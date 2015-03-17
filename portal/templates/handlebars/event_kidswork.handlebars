@@ -1,0 +1,108 @@
+<h2 class="sub-heading">Registration: {{ model.Name }}</h2>
+<h3>{{model.Type__c}}</h3>
+
+<div class="col-xs-12 col-md-12 col-lg-12">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Search</h3></div>
+        <div class="panel-body">
+
+
+            <table class="layout">
+                <tr>
+                    <td class="layout-label">Date of Event</td>
+                    <td>{{view App.CalendarDatePicker name=registration_date value=registration_date class="form-control" placeholder="registration_date" readonly="true" title="Click to enter the date"}}</td>
+                </tr>
+                <tr>
+                    <td class="layout-label">Search</td>
+                    <td class="layout-filter">
+                        <form role="form" {{action 'findPeople' on="submit"}}>
+                        {{input text="search" value=find_name placeholder="find child name or family tag" class="form-control"}}
+                        </form>
+                    </td>
+                </tr>
+            </table>
+
+
+            {{#if searchResults}}
+            <table class="results">
+                <tr>
+                    <th class="small"></th><th>Name</th><th>Group</th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th>Parents</th>
+                </tr>
+
+                {{#each r in searchResults}}
+                    <tr>
+                        <td class="small"><button class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                        <td>{{r.Name}}</td>
+                        <td>{{r.Kids_Group__c}}</td>
+                        <td class="cell-center">{{r.Child_Tag_Number__c}}</td>
+                        <td class="cell-center">{{r.Family_Tag__c}}</td>
+                        <td>{{r.Parent_Name__c}}</td>
+                    </tr>
+                {{/each}}
+            </table>
+            {{/if}}
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-12 col-md-12 col-lg-12">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Primary</h3></div>
+        <div class="panel-body">
+            <table class="results">
+                <tr>
+                    <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
+                </tr>
+                {{#each r in model.registrations}}
+                    {{#if r.isPrimary}}
+                        <tr {{r.SignedOut}}>
+                            <td class="small"><button class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                            <td>{{r.Name}}</td>
+                            <td>
+                                {{#if r.SignedOut}}
+                                    {{#link-to ''}}SIGNED OUT{{/link-to}}
+                                {{else}}
+                                    {{#link-to ''}}SIGN OUT{{/link-to}}
+                                {{/if}}
+                            </td>
+                            <td class="cell-center">{{r.ChildTag}}</td>
+                            <td class="cell-center">{{r.FamilyTag}}</td>
+                            <td>{{#link-to ''}}REMOVE FROM THIS EVENT{{/link-to}}</td>
+                        </tr>
+                    {{/if}}
+                {{/each}}
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-12 col-md-12 col-lg-12">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Pre school</h3></div>
+        <div class="panel-body">
+            <table class="results">
+                <tr>
+                    <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
+                </tr>
+                {{#each r in model.registrations}}
+                    {{#if r.isPreschool}}
+                        <tr {{r.SignedOut}}>
+                            <td class="small"><button class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                            <td>{{r.Name}}</td>
+                            <td>
+                                {{#if r.SignedOut}}
+                                    {{#link-to ''}}SIGNED OUT{{/link-to}}
+                                {{else}}
+                                    {{#link-to ''}}SIGN OUT{{/link-to}}
+                                {{/if}}
+                            </td>
+                            <td class="cell-center">{{r.ChildTag}}</td>
+                            <td class="cell-center">{{r.FamilyTag}}</td>
+                            <td>{{#link-to ''}}REMOVE FROM THIS EVENT{{/link-to}}</td>
+                        </tr>
+                    {{/if}}
+                {{/each}}
+            </table>
+        </div>
+    </div>
+</div>

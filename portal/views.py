@@ -186,5 +186,22 @@ def api_event_get(event_id, registration_date):
     sf = SFEvent()
     event, registrations = sf.event_by_id(event_id, registration_date)
     event["registrations"] = registrations
-    app.logger.debug(event)
     return jsonify(response="Success", data=event)
+
+
+@app.route('/api/event/<event_id>/<registration_date>/find_person', methods=["POST"])
+@login_required
+def api_event_find_person(event_id, registration_date):
+    find_name = request.json["find_name"]
+
+    sf = SFEvent()
+    try:
+        family_tag = int(find_name)
+        name = None
+    except ValueError:
+        name = find_name
+        family_tag = None
+
+    results = sf.find_person(
+        name=name, tag=family_tag, event_type=request.json["type"])
+    return jsonify(response="Success", data=results)
