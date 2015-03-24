@@ -128,7 +128,8 @@ App.EventController = Ember.ObjectController.extend({
 
 App.EventKidsworkController = Ember.ObjectController.extend({
     registration_date: moment().format('YYYY-MM-DD'),
-    searchResults: [{Name: 'Jack Wattis'}],
+    searchResults: [],
+    personInfo: {},
 
     getRegistrations: function() {
         var controller = this;
@@ -137,6 +138,14 @@ App.EventKidsworkController = Ember.ObjectController.extend({
             controller.set('model.registrations', data.data.registrations);
         });
     }.observes("registration_date"),
+
+    totalPrimary: function() {
+        return this.get('model.registrations').filterBy('isPrimary', true).length;
+    }.property('model.registrations'),
+
+    totalPreschool: function() {
+        return this.get('model.registrations').filterBy('isPreschool', true).length;
+    }.property('model.registrations'),
 
     findPeople: function() {
         // Only perform the search if a name is entered
@@ -158,8 +167,20 @@ App.EventKidsworkController = Ember.ObjectController.extend({
     },
 
     actions: {
-        findPeople: function () {
+        findPeople: function() {
             this.findPeople();
+        },
+
+        showPerson: function(r) {
+            var controller = this;
+
+            // Get the person's details
+            App.Person.findById(r.PersonId).then(function(data) {
+                controller.set('personInfo', data.person);
+
+                // Show the person details dialog
+                Ember.$('#personInfoModal').modal('show');
+            });
         }
     }
 });

@@ -1,3 +1,4 @@
+var DATE_FORMAT = 'DD/MM/YYYY';
 
 // Ajax wrapper that returns a promise
 function ajax (url, options) {
@@ -18,6 +19,33 @@ function ajax (url, options) {
     });
   });
 }
+
+
+Ember.Handlebars.registerBoundHelper('formatDate', function(date) {
+    if (date) {
+        return moment(date, 'YYYY-MM-DD').format(DATE_FORMAT);
+    } else {
+        return '';
+    }
+});
+
+
+Ember.Handlebars.registerBoundHelper('formatNotes', function(notes) {
+    if (notes) {
+        return notes.replace('\n', '\n ').split('\n');
+    } else {
+        return [''];
+    }
+});
+
+
+Ember.Handlebars.registerBoundHelper('formatPicklist', function(notes) {
+    if (notes) {
+        return notes.replace(';', '; ');
+    } else {
+        return '';
+    }
+});
 
 
 Ember.Handlebars.registerBoundHelper('emailList', function(members) {

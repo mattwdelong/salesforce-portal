@@ -41,7 +41,7 @@ module.exports = function(grunt) {
             dest: 'portal/static/js/dist/portal.js'
           },
           vendor: {
-            src: ['node_modules/bootstrap/dist/js/**/*.min.js'],
+            src: ['bower_components/bootstrap/dist/js/**/*.min.js'],
             dest: 'portal/static/js/dist/vendor.js'
           }
         },
@@ -62,7 +62,7 @@ module.exports = function(grunt) {
                         flatten: true
                     },
                     {
-                        src: ['node_modules/bootstrap/dist/css/*.min.css', ],
+                        src: ['bower_components/bootstrap/dist/css/*.min.css', ],
                         dest: 'portal/static/css/',
                         expand: true,
                         flatten: true

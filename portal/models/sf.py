@@ -608,9 +608,10 @@ class SFEvent(SFObject):
         Get all the registrations for an event.
         """
         soql = """
-            select Id, Contact__r.Name, Status__c, Contact__r.Contact_Type__c,
-            Contact__r.Kids_Group__c, Contact__r.Child_Tag_Number__c,
-            Contact__r.Parent_Name__c, Contact__r.Family_Tag__c
+            select Id, Contact__c, Contact__r.Name, Status__c,
+            Contact__r.Contact_Type__c, Contact__r.Kids_Group__c,
+            Contact__r.Child_Tag_Number__c, Contact__r.Parent_Name__c,
+            Contact__r.Family_Tag__c
             from Registration__c
             where Event_Date__c=%s
             and Event__c='%s'
@@ -622,6 +623,7 @@ class SFEvent(SFObject):
         for r in reg_list["records"]:
             records.append({
                 "Id": r["Id"],
+                "PersonId": r["Contact__c"],
                 "Name": r["Contact__r"]["Name"],
                 "Status": r["Status__c"],
                 "SignedOut":

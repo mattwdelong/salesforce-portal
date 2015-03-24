@@ -253,7 +253,8 @@ App.Router.map(function() {
 
 App.EventKidsworkController = Ember.ObjectController.extend({
     registration_date: moment().format('YYYY-MM-DD'),
-    searchResults: [{Name: 'Jack Wattis'}],
+    searchResults: [],
+    personInfo: {},
 
     getRegistrations: function() {
         var controller = this;
@@ -262,6 +263,14 @@ App.EventKidsworkController = Ember.ObjectController.extend({
             controller.set('model.registrations', data.data.registrations);
         });
     }.observes("registration_date"),
+
+    totalPrimary: function() {
+        return this.get('model.registrations').filterBy('isPrimary', true).length;
+    }.property('model.registrations'),
+
+    totalPreschool: function() {
+        return this.get('model.registrations').filterBy('isPreschool', true).length;
+    }.property('model.registrations'),
 
     findPeople: function() {
         // Only perform the search if a name is entered
@@ -283,8 +292,20 @@ App.EventKidsworkController = Ember.ObjectController.extend({
     },
 
     actions: {
-        findPeople: function () {
+        findPeople: function() {
             this.findPeople();
+        },
+
+        showPerson: function(r) {
+            var controller = this;
+
+            // Get the person's details
+            App.Person.findById(r.PersonId).then(function(data) {
+                controller.set('personInfo', data.person);
+
+                // Show the person details dialog
+                Ember.$('#personInfoModal').modal('show');
+            });
         }
     }
 });
@@ -469,7 +490,8 @@ App.PersonController = Ember.ObjectController.extend({
         }
     }
 });
-;
+;var DATE_FORMAT = 'DD/MM/YYYY';
+
 // Ajax wrapper that returns a promise
 function ajax (url, options) {
   return new Ember.RSVP.Promise(function (resolve, reject) {
@@ -489,6 +511,33 @@ function ajax (url, options) {
     });
   });
 }
+
+
+Ember.Handlebars.registerBoundHelper('formatDate', function(date) {
+    if (date) {
+        return moment(date, 'YYYY-MM-DD').format(DATE_FORMAT);
+    } else {
+        return '';
+    }
+});
+
+
+Ember.Handlebars.registerBoundHelper('formatNotes', function(notes) {
+    if (notes) {
+        return notes.replace('\n', '\n ').split('\n');
+    } else {
+        return [''];
+    }
+});
+
+
+Ember.Handlebars.registerBoundHelper('formatPicklist', function(notes) {
+    if (notes) {
+        return notes.replace(';', '; ');
+    } else {
+        return '';
+    }
+});
 
 
 Ember.Handlebars.registerBoundHelper('emailList', function(members) {
