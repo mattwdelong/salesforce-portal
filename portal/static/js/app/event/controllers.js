@@ -181,6 +181,22 @@ App.EventKidsworkController = Ember.ObjectController.extend({
                 // Show the person details dialog
                 Ember.$('#personInfoModal').modal('show');
             });
-        }
+        },
+
+        signIn: function(r) {
+            var controller = this;
+
+            App.Event.signIn(r.Id).then(function(data) {
+                controller.get('model.registrations').setObjects(data.registrations);
+            });
+        }.observes('registrations'),
+
+        signOut: function(r) {
+            var controller = this;
+
+            App.Event.signOut(r.Id).then(function(data) {
+                controller.get('model').registrations.setObjects(data.registrations);
+            });
+        }.observes('registrations')
     }
 });

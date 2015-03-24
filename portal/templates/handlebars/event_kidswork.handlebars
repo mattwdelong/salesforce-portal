@@ -60,9 +60,9 @@
                             <td>{{r.Name}}</td>
                             <td>
                                 {{#if r.SignedOut}}
-                                    {{#link-to ''}}SIGNED OUT{{/link-to}}
+                                    <button {{action 'signIn' r}} class="signed-out btn-link">SIGNED OUT</button>
                                 {{else}}
-                                    {{#link-to ''}}SIGN OUT{{/link-to}}
+                                    <button {{action 'signOut' r}} class="btn-link">SIGN OUT</button>
                                 {{/if}}
                             </td>
                             <td class="cell-center">{{r.ChildTag}}</td>
@@ -91,9 +91,9 @@
                             <td>{{r.Name}}</td>
                             <td>
                                 {{#if r.SignedOut}}
-                                    {{#link-to ''}}SIGNED OUT{{/link-to}}
+                                    <button {{action 'signIn' r}} class="signed-out btn-link">SIGNED OUT</button>
                                 {{else}}
-                                    {{#link-to ''}}SIGN OUT{{/link-to}}
+                                    <button {{action 'signOut' r}} class="btn-link">SIGN OUT</button>
                                 {{/if}}
                             </td>
                             <td class="cell-center">{{r.ChildTag}}</td>

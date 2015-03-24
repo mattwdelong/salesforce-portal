@@ -306,7 +306,23 @@ App.EventKidsworkController = Ember.ObjectController.extend({
                 // Show the person details dialog
                 Ember.$('#personInfoModal').modal('show');
             });
-        }
+        },
+
+        signIn: function(r) {
+            var controller = this;
+
+            App.Event.signIn(r.Id).then(function(data) {
+                controller.get('model.registrations').setObjects(data.registrations);
+            });
+        }.observes('registrations'),
+
+        signOut: function(r) {
+            var controller = this;
+
+            App.Event.signOut(r.Id).then(function(data) {
+                controller.get('model').registrations.setObjects(data.registrations);
+            });
+        }.observes('registrations')
     }
 });
 ;App.PeopleController = Ember.ArrayController.extend({
@@ -733,7 +749,7 @@ App.Event.reopenClass({
             type: 'GET',
             contentType: "application/json; charset=utf-8",
             dataType: "json"
-        })
+        });
     },
 
     findPerson: function(modelId, registration_date, type, find_name) {
@@ -745,7 +761,40 @@ App.Event.reopenClass({
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
-        })
+        });
+    },
+
+    signIn: function(registrationId) {
+        return ajax(this.url + '/registration/' + registrationId, {
+            type: 'POST',
+            data: JSON.stringify({
+                action: 'Signed-In'
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    signOut: function(registrationId) {
+        return ajax(this.url + '/registration/' + registrationId, {
+            type: 'POST',
+            data: JSON.stringify({
+                action: 'Signed-Out'
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    remove: function(registrationId) {
+        return ajax(this.url + '/registration/' + registrationId, {
+            type: 'POST',
+            data: JSON.stringify({
+                action: 'Delete'
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
     }
 });
 ;App.IndexRoute = Ember.Route.extend({

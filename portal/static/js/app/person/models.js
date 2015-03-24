@@ -241,7 +241,7 @@ App.Event.reopenClass({
             type: 'GET',
             contentType: "application/json; charset=utf-8",
             dataType: "json"
-        })
+        });
     },
 
     findPerson: function(modelId, registration_date, type, find_name) {
@@ -253,6 +253,39 @@ App.Event.reopenClass({
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
-        })
+        });
+    },
+
+    signIn: function(registrationId) {
+        return ajax(this.url + '/registration/' + registrationId, {
+            type: 'POST',
+            data: JSON.stringify({
+                action: 'Signed-In'
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    signOut: function(registrationId) {
+        return ajax(this.url + '/registration/' + registrationId, {
+            type: 'POST',
+            data: JSON.stringify({
+                action: 'Signed-Out'
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
+    remove: function(registrationId) {
+        return ajax(this.url + '/registration/' + registrationId, {
+            type: 'POST',
+            data: JSON.stringify({
+                action: 'Delete'
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
     }
 });

@@ -205,3 +205,11 @@ def api_event_find_person(event_id, registration_date):
     results = sf.find_person(
         name=name, tag=family_tag, event_type=request.json["type"])
     return jsonify(response="Success", data=results)
+
+
+@app.route('/api/event/registration/<registration_id>', methods=["POST"])
+@login_required
+def api_event_registration(registration_id):
+    sf = SFEvent()
+    registrations = sf.register(registration_id, request.json["action"])
+    return jsonify(response="Success", registrations=registrations)

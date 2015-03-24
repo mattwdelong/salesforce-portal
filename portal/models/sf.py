@@ -663,3 +663,23 @@ class SFEvent(SFObject):
         """ % (FIELDS, condition)
         results = self.connection.query(soql)
         return results
+
+    def register(self, registration_id, action):
+        """
+        Update the status of a registration or remove it.
+        """
+        # Get the registration, so we know event_id and event_date
+        registration = self.connection.Registration__c.get(registration_id)
+
+        # Update or delete the event, as requested
+        if action == 'Delete':
+            self.connection.Registration__c.delete(registration_id)
+        else:
+            sf_record = {
+                "Status__c": action
+            }
+            self.connection.Registration__c.update(registration_id, sf_record)
+
+        # Return the up-to-date registrations for the event and date
+        return self.registrations(
+            registration["Event__c"], registration["Event_Date__c"])

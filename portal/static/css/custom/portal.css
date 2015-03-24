@@ -41,6 +41,10 @@ table.results tr.signed-out td a {
     color: #808080;
 }
 
+table.results tr.signed-out button.signed-out {
+    color: #808080 !important;
+}
+
 
 .cell-center {
     text-align: center;
