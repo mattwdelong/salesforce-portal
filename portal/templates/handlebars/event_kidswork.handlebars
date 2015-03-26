@@ -6,7 +6,6 @@
         <div class="panel-heading"><h3 class="panel-title">Search</h3></div>
         <div class="panel-body">
 
-
             <table class="layout">
                 <tr>
                     <td class="layout-label">Date of Event</td>
@@ -22,25 +21,26 @@
                 </tr>
             </table>
 
-
             {{#if searchResults}}
-            <table class="results">
-                <tr>
-                    <th class="small"></th><th>Name</th><th>Group</th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th>Parents</th>
-                </tr>
-
-                {{#each r in searchResults}}
+            <div class="table-responsive">
+                <table class="results">
                     <tr>
-                        <td class="small"><button class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button></td>
-                        <td>{{r.Name}}</td>
-                        <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
-                        <td>{{r.Kids_Group__c}}</td>
-                        <td class="cell-center">{{r.Child_Tag_Number__c}}</td>
-                        <td class="cell-center">{{r.Family_Tag__c}}</td>
-                        <td>{{r.Parent_Name__c}}</td>
+                        <th class="small"></th><th>Name</th><th></th><th>Group</th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th>Parents</th>
                     </tr>
-                {{/each}}
-            </table>
+
+                    {{#each r in searchResults}}
+                        <tr>
+                            <td class="small"><button class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                            <td>{{r.Name}}</td>
+                            <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
+                            <td>{{r.Kids_Group__c}}</td>
+                            <td class="cell-center">{{r.Child_Tag_Number__c}}</td>
+                            <td class="cell-center">{{r.Family_Tag__c}}</td>
+                            <td>{{r.Parent_Name__c}}</td>
+                        </tr>
+                    {{/each}}
+                </table>
+            </div>
             {{/if}}
         </div>
     </div>
@@ -50,29 +50,31 @@
     <div class="panel panel-default">
         <div class="panel-heading"><h3 class="panel-title">Primary ({{totalPrimary}})</h3></div>
         <div class="panel-body">
-            <table class="results">
-                <tr>
-                    <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
-                </tr>
-                {{#each r in model.registrations}}
-                    {{#if r.isPrimary}}
-                        <tr {{r.SignedOut}}>
-                            <td class="small"><button class="btn btn-default" {{action 'showPerson' r}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
-                            <td>{{r.Name}}</td>
-                            <td>
-                                {{#if r.SignedOut}}
-                                    <button {{action 'signIn' r}} class="signed-out btn-link">SIGNED OUT</button>
-                                {{else}}
-                                    <button {{action 'signOut' r}} class="btn-link">SIGN OUT</button>
-                                {{/if}}
-                            </td>
-                            <td class="cell-center">{{r.ChildTag}}</td>
-                            <td class="cell-center">{{r.FamilyTag}}</td>
-                            <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
-                        </tr>
-                    {{/if}}
-                {{/each}}
-            </table>
+            <div class="table-responsive">
+                <table class="results">
+                    <tr>
+                        <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
+                    </tr>
+                    {{#each r in model.registrations}}
+                        {{#if r.isPrimary}}
+                            <tr {{r.SignedOut}}>
+                                <td class="small"><button class="btn btn-default" {{action 'showPerson' r}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                                <td>{{r.Name}}</td>
+                                <td>
+                                    {{#if r.SignedOut}}
+                                        <button {{action 'signIn' r}} class="signed-out btn-link">SIGNED OUT</button>
+                                    {{else}}
+                                        <button {{action 'signOut' r}} class="btn-link">SIGN OUT</button>
+                                    {{/if}}
+                                </td>
+                                <td class="cell-center">{{r.ChildTag}}</td>
+                                <td class="cell-center">{{r.FamilyTag}}</td>
+                                <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
+                            </tr>
+                        {{/if}}
+                    {{/each}}
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -81,29 +83,31 @@
     <div class="panel panel-default">
         <div class="panel-heading"><h3 class="panel-title">Pre school ({{totalPreschool}})</h3></div>
         <div class="panel-body">
-            <table class="results">
-                <tr>
-                    <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
-                </tr>
-                {{#each r in model.registrations}}
-                    {{#if r.isPreschool}}
-                        <tr {{r.SignedOut}}>
-                            <td class="small"><button class="btn btn-default" {{action 'showPerson' r}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
-                            <td>{{r.Name}}</td>
-                            <td>
-                                {{#if r.SignedOut}}
-                                    <button {{action 'signIn' r}} class="signed-out btn-link">SIGNED OUT</button>
-                                {{else}}
-                                    <button {{action 'signOut' r}} class="btn-link">SIGN OUT</button>
-                                {{/if}}
-                            </td>
-                            <td class="cell-center">{{r.ChildTag}}</td>
-                            <td class="cell-center">{{r.FamilyTag}}</td>
-                            <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
-                        </tr>
-                    {{/if}}
-                {{/each}}
-            </table>
+            <div class="table-responsive">
+                <table class="results">
+                    <tr>
+                        <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
+                    </tr>
+                    {{#each r in model.registrations}}
+                        {{#if r.isPreschool}}
+                            <tr {{r.SignedOut}}>
+                                <td class="small"><button class="btn btn-default" {{action 'showPerson' r}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                                <td>{{r.Name}}</td>
+                                <td>
+                                    {{#if r.SignedOut}}
+                                        <button {{action 'signIn' r}} class="signed-out btn-link">SIGNED OUT</button>
+                                    {{else}}
+                                        <button {{action 'signOut' r}} class="btn-link">SIGN OUT</button>
+                                    {{/if}}
+                                </td>
+                                <td class="cell-center">{{r.ChildTag}}</td>
+                                <td class="cell-center">{{r.FamilyTag}}</td>
+                                <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
+                            </tr>
+                        {{/if}}
+                    {{/each}}
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -115,42 +119,44 @@
         <h4 class="modal-title">{{personInfo.Name}}</h4>
       </div>
       <div class="modal-body">
-          <table class="layout">
-                <tr>
-                    <td class="layout-label">Next of Kin</td>
-                    <td>{{personInfo.Next_of_Kin__c}}</td>
-                    <td class="layout-label">Phone Number</td>
-                    <td>{{personInfo.Next_of_Kin_Phone_Number__c}}</td>
-                </tr>
-                <tr>
-                    <td class="layout-label">Family Tag</td>
-                    <td>{{personInfo.Family_Tag__c}}</td>
-                    <td class="layout-label"></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td class="layout-label">Child Tag</td>
-                    <td>{{personInfo.Child_Tag_Number__c}}</td>
-                    <td class="layout-label">Date of Birth</td>
-                    <td>{{formatDate personInfo.Birthdate}}</td>
-                </tr>
-                <tr>
-                    <td class="layout-label">Group</td>
-                    <td>{{personInfo.Kids_Group__c}}</td>
-                    <td class="layout-label">Team</td>
-                    <td>{{personInfo.Kids_Team__c}}</td>
-                </tr>
-                <tr>
-                    <td class="layout-label">Medical Info</td>
-                    <td colspan="3">{{formatPicklist personInfo.Medical_Info__c}}</td>
-                </tr>
-                <tr>
-                    <td class="layout-label">Medical Notes</td>
-                    <td colspan="3">
-                        {{formatNotes personInfo.Medical_Notes__c}}
-                    </td>
-                </tr>
-          </table>
+          <div class="table-responsive">
+              <table class="layout">
+                    <tr>
+                        <td class="layout-label">Next of Kin</td>
+                        <td>{{personInfo.Next_of_Kin__c}}</td>
+                        <td class="layout-label">Phone Number</td>
+                        <td>{{personInfo.Next_of_Kin_Phone_Number__c}}</td>
+                    </tr>
+                    <tr>
+                        <td class="layout-label">Family Tag</td>
+                        <td>{{personInfo.Family_Tag__c}}</td>
+                        <td class="layout-label"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="layout-label">Child Tag</td>
+                        <td>{{personInfo.Child_Tag_Number__c}}</td>
+                        <td class="layout-label">Date of Birth</td>
+                        <td>{{formatDate personInfo.Birthdate}}</td>
+                    </tr>
+                    <tr>
+                        <td class="layout-label">Group</td>
+                        <td>{{personInfo.Kids_Group__c}}</td>
+                        <td class="layout-label">Team</td>
+                        <td>{{personInfo.Kids_Team__c}}</td>
+                    </tr>
+                    <tr>
+                        <td class="layout-label">Medical Info</td>
+                        <td colspan="3">{{formatPicklist personInfo.Medical_Info__c}}</td>
+                    </tr>
+                    <tr>
+                        <td class="layout-label">Medical Notes</td>
+                        <td colspan="3">
+                            {{formatNotes personInfo.Medical_Notes__c}}
+                        </td>
+                    </tr>
+              </table>
+          </div>
       </div>
       <div class="modal-footer">
           <button data-dismiss="modal" class="btn btn-info">Close</button>
