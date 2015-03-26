@@ -256,6 +256,19 @@ App.Event.reopenClass({
         });
     },
 
+    signInNew: function(eventId, registrationDate, personId) {
+        return ajax(this.url + '/registration/new', {
+            type: 'POST',
+            data: JSON.stringify({
+                event_id: eventId,
+                registration_date: registrationDate,
+                person_id: personId
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    },
+
     signIn: function(registrationId) {
         return ajax(this.url + '/registration/' + registrationId, {
             type: 'POST',

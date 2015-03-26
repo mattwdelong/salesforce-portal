@@ -683,3 +683,39 @@ class SFEvent(SFObject):
         # Return the up-to-date registrations for the event and date
         return self.registrations(
             registration["Event__c"], registration["Event_Date__c"])
+
+    def register_new(self, event_id, event_date, person_id):
+        """
+        Add a registration for the person or sign them in.
+        """
+        soql = """
+            select Id, Contact__c, Contact__r.Name, Status__c,
+            Contact__r.Contact_Type__c, Contact__r.Kids_Group__c,
+            Contact__r.Child_Tag_Number__c, Contact__r.Parent_Name__c,
+            Contact__r.Family_Tag__c
+            from Registration__c
+            where Event_Date__c=%s
+            and Event__c='%s'
+            and Contact__c='%s'
+        """ % (event_date, event_id, person_id)
+        results = self.connection.query(soql)
+
+        if results["totalSize"] == 0:
+            # Doesn't exist, so add a registration
+            sf_record = {
+                "Contact__c": person_id,
+                "Event__c": event_id,
+                "Event_Date__c": event_date,
+                "Status__c": "Signed-In",
+            }
+            self.connection.Registration__c.create(sf_record)
+        else:
+            # Update the status on the registration
+            sf_record = {
+                "Status__c": "Signed-In",
+            }
+            registration_id = results["records"][0]["Id"]
+            self.connection.Registration__c.update(registration_id, sf_record)
+
+        # Return the up-to-date registrations for the event and date
+        return self.registrations(event_id, event_date)

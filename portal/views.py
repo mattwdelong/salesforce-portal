@@ -213,3 +213,14 @@ def api_event_registration(registration_id):
     sf = SFEvent()
     registrations = sf.register(registration_id, request.json["action"])
     return jsonify(response="Success", registrations=registrations)
+
+
+@app.route('/api/event/registration/new', methods=["POST"])
+@login_required
+def api_event_registration_new():
+    sf = SFEvent()
+    registrations = sf.register_new(
+        request.json["event_id"],
+        request.json["registration_date"],
+        request.json["person_id"])
+    return jsonify(response="Success", registrations=registrations)

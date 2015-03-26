@@ -135,17 +135,17 @@ App.EventKidsworkController = Ember.ObjectController.extend({
         var controller = this;
         App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
             controller.set('model', data.data);
-            controller.set('model.registrations', data.data.registrations);
+            controller.set('registrations', data.data.registrations);
         });
     }.observes("registration_date"),
 
     totalPrimary: function() {
         return this.get('model.registrations').filterBy('isPrimary', true).length;
-    }.property('model.registrations'),
+    }.property('registrations'),
 
     totalPreschool: function() {
         return this.get('model.registrations').filterBy('isPreschool', true).length;
-    }.property('model.registrations'),
+    }.property('registrations'),
 
     findPeople: function() {
         // Only perform the search if a name is entered
@@ -183,11 +183,23 @@ App.EventKidsworkController = Ember.ObjectController.extend({
             });
         },
 
+        signInNew: function(person) {
+            var controller = this;
+
+            var eventId = controller.get('model.Id');
+            var registrationDate = controller.get('registration_date');
+            var personId = person.Id;
+
+            App.Event.signInNew(eventId, registrationDate, personId).then(function(data) {
+                controller.set('registrations', data.registrations);
+            });
+        }.observes('registrations'),
+
         signIn: function(r) {
             var controller = this;
 
             App.Event.signIn(r.Id).then(function(data) {
-                controller.get('model.registrations').setObjects(data.registrations);
+                controller.set('registrations', data.registrations);
             });
         }.observes('registrations'),
 
@@ -195,7 +207,15 @@ App.EventKidsworkController = Ember.ObjectController.extend({
             var controller = this;
 
             App.Event.signOut(r.Id).then(function(data) {
-                controller.get('model').registrations.setObjects(data.registrations);
+                controller.set('registrations', data.registrations);
+            });
+        }.observes('registrations'),
+
+        remove: function(r) {
+            var controller = this;
+
+            App.Event.remove(r.Id).then(function(data) {
+                controller.set('registrations', data.registrations);
             });
         }.observes('registrations')
     }

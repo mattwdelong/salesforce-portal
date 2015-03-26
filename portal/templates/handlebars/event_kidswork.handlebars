@@ -33,6 +33,7 @@
                     <tr>
                         <td class="small"><button class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button></td>
                         <td>{{r.Name}}</td>
+                        <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
                         <td>{{r.Kids_Group__c}}</td>
                         <td class="cell-center">{{r.Child_Tag_Number__c}}</td>
                         <td class="cell-center">{{r.Family_Tag__c}}</td>
@@ -67,7 +68,7 @@
                             </td>
                             <td class="cell-center">{{r.ChildTag}}</td>
                             <td class="cell-center">{{r.FamilyTag}}</td>
-                            <td>{{#link-to ''}}REMOVE FROM THIS EVENT{{/link-to}}</td>
+                            <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
                         </tr>
                     {{/if}}
                 {{/each}}
@@ -98,7 +99,7 @@
                             </td>
                             <td class="cell-center">{{r.ChildTag}}</td>
                             <td class="cell-center">{{r.FamilyTag}}</td>
-                            <td>{{#link-to ''}}REMOVE FROM THIS EVENT{{/link-to}}</td>
+                            <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
                         </tr>
                     {{/if}}
                 {{/each}}
