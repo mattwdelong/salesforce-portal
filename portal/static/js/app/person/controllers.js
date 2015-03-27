@@ -1,10 +1,8 @@
+
 App.PeopleController = Ember.ArrayController.extend({
 
     getPermissions: function() {
-        var controller = this;
-        App.Person.permissions().then(function(result) {
-            controller.set('permissions', result.permissions);
-        });
+        getPermissions(this);
     },
 
     findPeople: function() {
@@ -52,23 +50,7 @@ App.PersonController = Ember.ObjectController.extend({
     isLeader: false,
 
     getPermissions: function() {
-        var controller = this;
-        App.Person.permissions().then(function(result) {
-            controller.set('permissions', result.permissions);
-
-            var isAdmin = false;
-            var isLeader = false;
-            if (controller.get("permissions")) {
-                if (controller.get("permissions").role=="Admin") {
-                    isAdmin = true;
-                    isLeader = true;
-                } else if (controller.get("permissions").role=="Leader") {
-                    isLeader = true;
-                }
-            }
-            controller.set('isAdmin', isAdmin);
-            controller.set('isLeader', isLeader);
-        });
+        getPermissions(this);
     },
 
     actions: {

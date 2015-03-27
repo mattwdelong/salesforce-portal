@@ -23,6 +23,10 @@ App.EventController = Ember.ObjectController.extend({
         this.set('filteredCount', this.get('model').registrations.length);
     }.observes('model.registrations'),
 
+    getPermissions: function() {
+        getPermissions(this);
+    },
+
     getRegistrations: function() {
         var controller = this;
         App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
@@ -130,6 +134,10 @@ App.EventKidsworkController = Ember.ObjectController.extend({
     registration_date: moment().format('YYYY-MM-DD'),
     searchResults: [],
     personInfo: {},
+
+    getPermissions: function() {
+        getPermissions(this);
+    },
 
     getRegistrations: function() {
         var controller = this;

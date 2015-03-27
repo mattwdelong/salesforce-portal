@@ -7,6 +7,10 @@ App.ContactController = Ember.ObjectController.extend({
     smallGroupsSelected: [],
     inProgress: false,
 
+    getPermissions: function() {
+        getPermissions(this);
+    },
+
     reset: function() {
         var teams = this.get("model").teams;
         this.set("teamsUnselected", teams);

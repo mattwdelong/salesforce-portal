@@ -69,7 +69,13 @@
                                 </td>
                                 <td class="cell-center">{{r.ChildTag}}</td>
                                 <td class="cell-center">{{r.FamilyTag}}</td>
-                                <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
+                                <td>
+                                    {{#if r.SignedOut}}
+                                        <button {{action 'remove' r}} class="signed-out btn-link">REMOVE FROM THIS EVENT</button>
+                                    {{else}}
+                                        <button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button>
+                                    {{/if}}
+                                </td>
                             </tr>
                         {{/if}}
                     {{/each}}
@@ -102,7 +108,13 @@
                                 </td>
                                 <td class="cell-center">{{r.ChildTag}}</td>
                                 <td class="cell-center">{{r.FamilyTag}}</td>
-                                <td><button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button></td>
+                                <td>
+                                    {{#if r.SignedOut}}
+                                        <button {{action 'remove' r}} class="signed-out btn-link">REMOVE FROM THIS EVENT</button>
+                                    {{else}}
+                                        <button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button>
+                                    {{/if}}
+                                </td>
                             </tr>
                         {{/if}}
                     {{/each}}

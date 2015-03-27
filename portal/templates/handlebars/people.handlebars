@@ -1,16 +1,24 @@
+{{#if isEvents}}
 <h2 class="sub-heading">People</h2>
+    <p>Use the Events menu for registrations.</p>
+{{else}}
+<h2 class="sub-heading">People</h2>
+{{/if}}
 
 <div class="col-xs-12 col-md-12 col-lg-12">
     <div class="form-group info">
-        <form role="form" {{action 'findPeople' on="submit"}}>
-            <div class="col-xs-6 col-md-6 col-lg-6">
-                {{input text="search" value=find_name placeholder="find name" class="form-control"}}
-            </div>
-            <div class="col-xs-6 col-md-6 col-lg-3">
-                <button {{action "findPeople"}} class="btn btn-primary" title="Find"><span class="glyphicon glyphicon-search"></span></button>
-                <button {{action "clearFind"}} class="btn btn-default" title="Clear"><span class="glyphicon glyphicon-remove-circle"></span></button>
-            </div>
-        </form>
+        {{#if isEvents}}
+        {{else}}
+            <form role="form" {{action 'findPeople' on="submit"}}>
+                <div class="col-xs-6 col-md-6 col-lg-6">
+                    {{input text="search" value=find_name placeholder="find name" class="form-control"}}
+                </div>
+                <div class="col-xs-6 col-md-6 col-lg-3">
+                    <button {{action "findPeople"}} class="btn btn-primary" title="Find"><span class="glyphicon glyphicon-search"></span></button>
+                    <button {{action "clearFind"}} class="btn btn-default" title="Clear"><span class="glyphicon glyphicon-remove-circle"></span></button>
+                </div>
+            </form>
+        {{/if}}
     </div>
 </div>
 
