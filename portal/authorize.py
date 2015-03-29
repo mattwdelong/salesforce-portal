@@ -48,8 +48,11 @@ def login():
 
 
 @app.route('/login/authorized')
-@google.authorized_handler
-def authorized(resp):
+#@google.authorized_handler
+def authorized():
+    resp = None
+    resp = google.authorized_response()
+    print(resp)
     if resp is None:
         return 'Access denied: reason=%s error=%s' % (
             request.args['error_reason'],
