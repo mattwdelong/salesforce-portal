@@ -1,6 +1,12 @@
 <h2 class="sub-heading">Registration: {{ model.Name }}</h2>
 <h3>{{model.Type__c}}</h3>
 
+{{#if loading}}
+<div class="container">
+    <label class="spinner">&nbsp;</label>
+</div>
+{{/if}}
+
 <div class="col-xs-12 col-md-12 col-lg-12">
     <div class="panel panel-default">
         <div class="panel-heading"><h3 class="panel-title">Search</h3></div>

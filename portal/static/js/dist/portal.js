@@ -128,6 +128,7 @@ App.Router.map(function() {
     }
 });
 ;App.EventController = Ember.ObjectController.extend({
+    loading: false,
     registration_date: moment().format('YYYY-MM-DD'),
     searchResultsComplete: [],
     searchResults: [],
@@ -162,9 +163,11 @@ App.Router.map(function() {
     getRegistrations: function() {
         console.log('getRegistrations');
         var controller = this;
+        controller.set('loading', true);
         App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
             controller.set('model', data.data);
             controller.set('registrations', data.data.registrations);
+            controller.set('loading', false);
         });
     }.observes("registration_date"),
 
@@ -173,11 +176,12 @@ App.Router.map(function() {
         // Get all the people
         var name = '';
         var controller = this;
+        controller.set('loading', true);
         App.Event.findPerson(controller.get("model").Id, controller.get("registration_date"),
             controller.get("model").Type__c, name).then(function(data) {
-
                 controller.set('searchResultsComplete', data.data.records);
                 controller.set('searchResults', data.data.records);
+                controller.set('loading', false);
         });
     },
 
@@ -300,6 +304,7 @@ App.Router.map(function() {
 
 
 App.EventKidsworkController = Ember.ObjectController.extend({
+    loading: false,
     registration_date: moment().format('YYYY-MM-DD'),
     searchResults: [],
     personInfo: {},
@@ -310,9 +315,11 @@ App.EventKidsworkController = Ember.ObjectController.extend({
 
     getRegistrations: function() {
         var controller = this;
+        controller.set('loading', true);
         App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
             controller.set('model', data.data);
             controller.set('registrations', data.data.registrations);
+            controller.set('loading', false);
         });
     }.observes("registration_date"),
 
@@ -337,9 +344,11 @@ App.EventKidsworkController = Ember.ObjectController.extend({
         }
 
         var controller = this;
+        controller.set('loading', true);
         App.Event.findPerson(controller.get("model").Id, controller.get("registration_date"),
             controller.get("model").Type__c, name).then(function(data) {
                 controller.set('searchResults', data.data.records);
+                controller.set('loading', false);
         });
     },
 
