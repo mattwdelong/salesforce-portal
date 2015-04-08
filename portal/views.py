@@ -203,7 +203,8 @@ def api_event_find_person(event_id, registration_date):
         family_tag = None
 
     results = sf.find_person(
-        name=name, tag=family_tag, event_type=request.json["type"])
+        event_id, registration_date, name=name, tag=family_tag,
+        event_type=request.json["type"])
     return jsonify(response="Success", data=results)
 
 

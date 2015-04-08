@@ -52,13 +52,11 @@ def login():
 def authorized():
     resp = None
     resp = google.authorized_response()
-    print(resp)
     if resp is None:
         return 'Access denied: reason=%s error=%s' % (
             request.args['error_reason'],
             request.args['error_description']
         )
-    print(resp)
     session['google_token'] = (resp['access_token'], '')
     me = google.get('userinfo')
 

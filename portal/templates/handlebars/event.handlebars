@@ -53,19 +53,33 @@
         <div class="col-lg-3">
             <span class="layout-highlight">{{filteredCount}}</span>
         </div>
+{{#if searchResults}}
+<div class="table-responsive">
+    <table class="results">
+        <tr>
+            <th>Name</th><th></th><th>Type</th>
+        </tr>
+        {{#each r in searchResults}}
+            <tr>
+                <td>{{r.Name}}</td>
+                <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
+                <td>{{r.Contact_Type__c}}</td>
+            </tr>
+        {{/each}}
+    </table>
+</div>
+{{/if}}
     </div>
 </div>
 
-<div>
+
+<div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
                 <th>Name</th><th>Status</th>
-                {{#if isKidswork }}
-                    <th>Group</th><th>Tag</th><th>Family Tag</th><th>Parents</th>
-                {{else}}
-                    <th>Type</th>
-                {{/if}}
+                <th>Type</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -73,14 +87,10 @@
         <tr>
             <td>{{reg.Name}}</td>
             <td>{{reg.Status}}</td>
-            {{#if isKidswork }}
-                <td>{{reg.KidsGroup}}</td>
-                <td>{{reg.ChildTag}}</td>
-                <td>{{reg.FamilyTag}}</td>
-                <td>{{reg.ParentNames}}</td>
-            {{else}}
-                <td>{{reg.Type}}</td>
-            {{/if}}
+            <td>{{reg.Type}}</td>
+            <td>
+                <button {{action 'remove' reg}} class="btn-link">REMOVE FROM THIS EVENT</button>
+            </td>
         </tr>
     {{/each}}
         </tbody>

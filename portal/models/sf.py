@@ -643,14 +643,17 @@ class SFEvent(SFObject):
             })
         return records
 
-    def find_person(self, name=None, tag=None, event_type=None):
+    def find_person(self, event_id, registration_date, name=None, tag=None,
+                    event_type=None):
         """
         Search for person by name or family tag.
         """
         if name:
-            condition = "name like '%%%s%%'" % name
+            condition = "and name like '%%%s%%'" % name
+        elif not name and not tag:
+            condition = ""
         else:
-            condition = "Family_Tag__c = %d" % tag
+            condition = "and Family_Tag__c = %d" % tag
 
         if event_type == "Kidswork":
             condition += " and Child_Tag_Number__c>0"
@@ -658,9 +661,11 @@ class SFEvent(SFObject):
         soql = """
             select %s
             from Contact
-            where %s
+            where Id not in (select Contact__c from Registration__c WHERE
+            Event__c='%s' and Event_Date__c=%s)
+            %s
             order by lastName, firstName
-        """ % (FIELDS, condition)
+        """ % (FIELDS, event_id, registration_date, condition)
         results = self.connection.query(soql)
         return results
 

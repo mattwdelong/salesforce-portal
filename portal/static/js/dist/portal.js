@@ -129,6 +129,8 @@ App.Router.map(function() {
 });
 ;App.EventController = Ember.ObjectController.extend({
     registration_date: moment().format('YYYY-MM-DD'),
+    searchResultsComplete: [],
+    searchResults: [],
     status_options: [{name:'ALL', selected: true},
                      {name:'Attended', selected: false},
                      {name:'Signed-In', selected:false},
@@ -147,22 +149,37 @@ App.Router.map(function() {
     kids: 'ALL',
 
     reset: function() {
+        console.log('reset');
         this.set('status', null);
         this.set('status', 'ALL');
-        this.set('filteredCount', this.get('model').registrations.length);
-    }.observes('model.registrations'),
+        this.set('filteredCount', this.get('registrations').length);
+    }.observes('registrations'),
 
     getPermissions: function() {
         getPermissions(this);
     },
 
     getRegistrations: function() {
+        console.log('getRegistrations');
         var controller = this;
         App.Event.findById(controller.get("model").Id, controller.get("registration_date")).then(function(data) {
             controller.set('model', data.data);
-            controller.set('model.registrations', data.data.registrations);
+            controller.set('registrations', data.data.registrations);
         });
     }.observes("registration_date"),
+
+    findPeople: function() {
+        console.log('findPeople');
+        // Get all the people
+        var name = '';
+        var controller = this;
+        App.Event.findPerson(controller.get("model").Id, controller.get("registration_date"),
+            controller.get("model").Type__c, name).then(function(data) {
+
+                controller.set('searchResultsComplete', data.data.records);
+                controller.set('searchResults', data.data.records);
+        });
+    },
 
     filter: function() {
         var status = this.get('status');
@@ -173,20 +190,21 @@ App.Router.map(function() {
             group = this.get('type');
         }
 
-
         if ((status == 'ALL') && (group == 'ALL')) {
-            this.set('filteredCount', this.get('model.registrations').length);
-            return this.get('model.registrations');
+            this.set('filteredCount', this.get('registrations').length);
+            this.set('searchResults', this.get('searchResultsComplete'));
+            return this.get('registrations');
         }
 
         var filtered;
+        var search = this.get('searchResultsComplete');
 
         // Filter the list based on the status
         if (status == 'ALL') {
-            filtered = this.get('model.registrations');
+            filtered = this.get('registrations');
         } else {
             var rx = new RegExp(status, 'gi');
-            filtered = this.get('model.registrations').filter(function (r) {
+            filtered = this.get('registrations').filter(function (r) {
                 return r.Status.match(rx);
             });
         }
@@ -194,18 +212,16 @@ App.Router.map(function() {
         // Filter the list based on the group
         if (group != 'ALL') {
             var rx = new RegExp(group, 'gi');
-            if (this.get('model.Type__c') == 'Kidswork') {
-                filtered = filtered.filter(function (r) {
-                    return r.KidsGroup.match(rx);
-                });
-            } else {
-                filtered = filtered.filter(function (r) {
-                    return r.Type.match(rx);
-                });
-            }
+            filtered = filtered.filter(function (r) {
+                return r.Type.match(rx);
+            });
+            search = search.filter(function (r) {
+                return r.Contact_Type__c.match(rx);
+            });
         }
 
         this.set('filteredCount', filtered.length);
+        this.set('searchResults', search);
         return filtered;
     },
 
@@ -254,7 +270,31 @@ App.Router.map(function() {
             this.set('type', opt.name);
             var options =  this.setOption(opt, 'type', 'type_options');
             this.set('type_options', options);
-        }
+        },
+
+        signInNew: function(person) {
+            var controller = this;
+
+            var eventId = controller.get('model.Id');
+            var registrationDate = controller.get('registration_date');
+            var personId = person.Id;
+
+            App.Event.signInNew(eventId, registrationDate, personId).then(function(data) {
+                controller.set('registrations', data.registrations);
+
+                // Remove the person from the search results
+                controller.set('searchResults', controller.get('searchResults').without(person));
+                controller.set('searchResultsComplete', controller.get('searchResultsComplete').without(person));
+            });
+        }.observes('registrations', 'searchResults', 'searchResultsComplete'),
+        
+        remove: function(r) {
+            var controller = this;
+
+            App.Event.remove(r.Id).then(function(data) {
+                controller.set('registrations', data.registrations);
+            });
+        }.observes('registrations')
     }
 });
 
@@ -926,6 +966,7 @@ App.EventRoute = Ember.Route.extend({
 
     setupController: function(controller, model) {
         controller.set('content', model);
+        controller.findPeople();
         getPermissions(controller);
     }
 });

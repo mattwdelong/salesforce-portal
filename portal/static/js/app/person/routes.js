@@ -100,6 +100,7 @@ App.EventRoute = Ember.Route.extend({
 
     setupController: function(controller, model) {
         controller.set('content', model);
+        controller.findPeople();
         getPermissions(controller);
     }
 });
