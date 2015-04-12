@@ -60,18 +60,9 @@
       </div>
     </div>
 
-{% raw %}
-<script type="text/x-handlebars">
-<div id="main" class="container-fluid" role="main">
-    <br><br>
-    {{outlet}}
-</div>
-</script>
-{% endraw %}
     <script src="/static/js/dist/vendor.js"></script>
     <script src="/static/js/dist/moment.min.js"></script>
     <script src="/static/js/dist/pikaday.min.js"></script>
-    <script src="/static/js/dist/ember-template-compiler.js"></script>
     <script src="/static/js/dist/ember.prod.js"></script>
 
     {%  if request.args.get('testing') %}
@@ -84,7 +75,7 @@
     <script src="/static/js/test/test.js"></script>
     {% else %}
     <script src="/static/js/dist/templates.min.js"></script>
-    <script src="/static/js/dist/portal.js"></script>
+    <script src="/static/js/dist/portal.min.js"></script>
     {% endif %}
 
 </body>
