@@ -2,7 +2,6 @@ import datetime
 import os
 from flask import session
 from simple_salesforce import Salesforce
-from portal import app
 
 
 FIELDS = """Id, Name, FirstName, LastName, Email, Contact_Type__c, HomePhone,
@@ -10,7 +9,8 @@ FIELDS = """Id, Name, FirstName, LastName, Email, Contact_Type__c, HomePhone,
             Gender__c, Marital_Status__c, Salvation__c, IsBaptised__c,
             RecordType.Name, Partner__c, DepartmentCoordinator__c,
             SeniorManagement__c, GovernanceElder__c, GovernanceTrustee__c,
-            Kids_Group__c, Child_Tag_Number__c, Family_Tag__c, Parent_Name__c"""
+            Kids_Group__c, Child_Tag_Number__c, Family_Tag__c,
+            Parent_Name__c"""
 
 
 class SFObject(object):
@@ -38,6 +38,7 @@ class SFPerson(SFObject):
             soql = """
                 select %s
                 from Contact
+                where Active__c = true
                 order by lastName, firstName
             """ % FIELDS
             results = self.connection.query(soql)
@@ -51,6 +52,7 @@ class SFPerson(SFObject):
             select %s
             from Contact
             where name like '%%%s%%'
+            and Active__c = true
             order by lastName, firstName
         """ % (FIELDS, name)
         results = self.connection.query(soql)
@@ -69,7 +71,8 @@ class SFPerson(SFObject):
         # Get the list of teams the current user can manage
         manageable_teams = self.person_team_serving_permissions(
             session['user_id'])
-        manageable_teams = [t["team_id"] for t in manageable_teams if t["access_manage"]]
+        manageable_teams = [
+            t["team_id"] for t in manageable_teams if t["access_manage"]]
         teams = self.person_team_serving(sf_id, manageable_teams)
         core_teams = self.person_core_team_serving(sf_id, manageable_teams)
 
@@ -325,7 +328,8 @@ class SFPerson(SFObject):
             membership = in_team["records"][0]
             if membership["Access__c"] == "Manage":
                 # Remove membership
-                self.connection.Contact_PortalGroup_Link__c.delete(membership["Id"])
+                self.connection.Contact_PortalGroup_Link__c.delete(
+                    membership["Id"])
                 team["in_team"] = False
             elif membership["Access__c"] == "Contact Only":
                 # Allow to manage
@@ -429,6 +433,7 @@ class SFPerson(SFObject):
         }
         self.connection.Contact.update(contact_id, sf_record)
 
+
 class SFContact(SFObject):
     def teams(self):
         """
@@ -442,7 +447,8 @@ class SFContact(SFObject):
             """
         else:
             soql = """
-                select Id, Name, Access__c, Team__r.Id, Team__r.Name, Team__r.TrackAttenders__c
+                select Id, Name, Access__c, Team__r.Id, Team__r.Name,
+                       Team__r.TrackAttenders__c
                 from ContactTeamLink__c
                 where Team__r.IsActive__c=true
                 and Contact__c = '%s'
@@ -627,16 +633,15 @@ class SFEvent(SFObject):
                 "Name": r["Contact__r"]["Name"],
                 "Status": r["Status__c"],
                 "SignedOut":
-                    'class="signed-out"' if r["Status__c"] == "Signed-Out"
-                    else "",
+                'class="signed-out"' if r["Status__c"] == "Signed-Out" else "",
                 "Type": r["Contact__r"]["Contact_Type__c"],
                 "KidsGroup": r["Contact__r"]["Kids_Group__c"],
                 "isPrimary":
-                    True if r["Contact__r"]["Kids_Group__c"] == "Primary"
-                    else False,
+                True if r["Contact__r"]["Kids_Group__c"] == "Primary"
+                else False,
                 "isPreschool":
-                    True if r["Contact__r"]["Kids_Group__c"] == "Preschool"
-                    else False,
+                True if r["Contact__r"]["Kids_Group__c"] == "Preschool"
+                else False,
                 "ChildTag": r["Contact__r"]["Child_Tag_Number__c"],
                 "FamilyTag": r["Contact__r"]["Family_Tag__c"],
                 "ParentNames": r["Contact__r"]["Parent_Name__c"],
@@ -664,6 +669,7 @@ class SFEvent(SFObject):
             where Id not in (select Contact__c from Registration__c WHERE
             Event__c='%s' and Event_Date__c=%s)
             %s
+            and Active__c = true
             order by lastName, firstName
         """ % (FIELDS, event_id, registration_date, condition)
         results = self.connection.query(soql)

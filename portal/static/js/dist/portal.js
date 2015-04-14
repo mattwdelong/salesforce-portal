@@ -207,9 +207,9 @@ App.Router.map(function() {
         if (status == 'ALL') {
             filtered = this.get('registrations');
         } else {
-            var rx = new RegExp(status, 'gi');
+            var rx1 = new RegExp(status, 'gi');
             filtered = this.get('registrations').filter(function (r) {
-                return r.Status.match(rx);
+                return r.Status.match(rx1);
             });
         }
 
@@ -291,7 +291,7 @@ App.Router.map(function() {
                 controller.set('searchResultsComplete', controller.get('searchResultsComplete').without(person));
             });
         }.observes('registrations', 'searchResults', 'searchResultsComplete'),
-        
+
         remove: function(r) {
             var controller = this;
 
@@ -336,7 +336,7 @@ App.EventKidsworkController = Ember.ObjectController.extend({
         var name = this.get('find_name');
         if (name) {
             name = name.replace(/^\s+|\s+$/g,'');
-            if (name.length == 0) {
+            if (name.length === 0) {
                 return;
             }
         } else {
@@ -357,11 +357,11 @@ App.EventKidsworkController = Ember.ObjectController.extend({
             this.findPeople();
         },
 
-        showPerson: function(r) {
+        showPerson: function(personId) {
             var controller = this;
 
             // Get the person's details
-            App.Person.findById(r.PersonId).then(function(data) {
+            App.Person.findById(personId).then(function(data) {
                 controller.set('personInfo', data.person);
 
                 // Show the person details dialog

@@ -36,7 +36,7 @@
 
                     {{#each r in searchResults}}
                         <tr>
-                            <td class="small"><button class="btn btn-default"><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                            <td class="small"><button class="btn btn-default" {{action 'showPerson' r.Id}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
                             <td>{{r.Name}}</td>
                             <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
                             <td>{{r.Kids_Group__c}}</td>
@@ -64,7 +64,7 @@
                     {{#each r in model.registrations}}
                         {{#if r.isPrimary}}
                             <tr {{r.SignedOut}}>
-                                <td class="small"><button class="btn btn-default" {{action 'showPerson' r}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                                <td class="small"><button class="btn btn-default" {{action 'showPerson' r.PersonId}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
                                 <td>{{r.Name}}</td>
                                 <td>
                                     {{#if r.SignedOut}}
@@ -103,7 +103,7 @@
                     {{#each r in model.registrations}}
                         {{#if r.isPreschool}}
                             <tr {{r.SignedOut}}>
-                                <td class="small"><button class="btn btn-default" {{action 'showPerson' r}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                                <td class="small"><button class="btn btn-default" {{action 'showPerson' r.PersonId}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
                                 <td>{{r.Name}}</td>
                                 <td>
                                     {{#if r.SignedOut}}
