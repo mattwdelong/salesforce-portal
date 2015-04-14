@@ -240,6 +240,11 @@ App.EventKidsworkController = Ember.ObjectController.extend({
             });
         },
 
+        clearSearch: function() {
+            this.set('searchResults', []);
+            this.set('find_name', null);
+        },
+
         signInNew: function(person) {
             var controller = this;
 

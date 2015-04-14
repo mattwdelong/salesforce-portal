@@ -21,7 +21,10 @@
                     <td class="layout-label">Search</td>
                     <td class="layout-filter">
                         <form role="form" {{action 'findPeople' on="submit"}}>
-                        {{input text="search" value=find_name placeholder="find child name or family tag" class="form-control"}}
+                            <div class="input-group">
+                            {{input text="search" value=find_name placeholder="find child name or family tag" class="form-control"}}
+                            <span class="input-group-btn"><button {{action 'clearSearch'}} class="btn btn-default" type="button">Clear</button></span>
+                            </div>
                         </form>
                     </td>
                 </tr>
