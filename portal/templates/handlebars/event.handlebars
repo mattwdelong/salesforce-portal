@@ -17,40 +17,16 @@
                     <td>{{view App.CalendarDatePicker name=registration_date value=registration_date class="form-control" placeholder="registration_date" readonly="true" title="Click to enter the date"}}</td>
                 </tr>
                 <tr>
-                    <td class="layout-label">Status</td>
-                    <td class="layout-filter">
-                        <div class="btn-group" role="group">
-                            {{#each status in status_options}}
-                                {{#if status.selected}}
-                                <button type="button" class="btn btn-primary" checked>{{status.name}}</button>
-                                {{else}}
-                                <button type="button" {{action 'setStatus' status}} class="btn btn-default">{{status.name}}</button>
-                                {{/if}}
-                            {{/each}}
-                        </div>
-                    </td>
-                </tr>
-                <tr>
                     <td class="layout-label">Groups</td>
                     <td class="layout-filter">
                         <div class="btn-group" role="group">
-                            {{# if isKidswork}}
-                                {{#each opt in kids_options}}
-                                    {{#if opt.selected}}
-                                    <button type="button" class="btn btn-primary" checked>{{opt.name}}</button>
-                                    {{else}}
-                                    <button type="button" {{action 'setKidsGroup' opt}} class="btn btn-default">{{opt.name}}</button>
-                                    {{/if}}
-                                {{/each}}
-                            {{else}}
-                                {{#each opt in type_options}}
-                                    {{#if opt.selected}}
-                                    <button type="button" class="btn btn-primary" checked>{{opt.name}}</button>
-                                    {{else}}
-                                    <button type="button" {{action 'setTypeGroup' opt}} class="btn btn-default">{{opt.name}}</button>
-                                    {{/if}}
-                                {{/each}}
-                            {{/if}}
+                            {{#each opt in type_options}}
+                                {{#if opt.selected}}
+                                <button type="button" class="btn btn-primary" checked>{{opt.name}}</button>
+                                {{else}}
+                                <button type="button" {{action 'setTypeGroup' opt}} class="btn btn-default">{{opt.name}}</button>
+                                {{/if}}
+                            {{/each}}
                         </div>
                     </td>
                 </tr>
@@ -59,46 +35,49 @@
         <div class="col-lg-3">
             <span class="layout-highlight">{{filteredCount}}</span>
         </div>
-{{#if searchResults}}
-<div class="table-responsive">
-    <table class="results">
-        <tr>
-            <th>Name</th><th></th><th>Type</th>
-        </tr>
-        {{#each r in searchResults}}
-            <tr>
-                <td>{{r.Name}}</td>
-                <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
-                <td>{{r.Contact_Type__c}}</td>
-            </tr>
-        {{/each}}
-    </table>
-</div>
-{{/if}}
+
+        <div class="col-lg-6">
+            {{#if searchResults}}
+            <div class="table-responsive">
+                <table class="results">
+                    <tr>
+                        <th>Name</th><th></th><th>Type</th>
+                    </tr>
+                    {{#each r in searchResults}}
+                        <tr>
+                            <td>{{r.Name}}</td>
+                            <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
+                            <td>{{r.Contact_Type__c}}</td>
+                        </tr>
+                    {{/each}}
+                </table>
+            </div>
+            {{/if}}
+        </div>
+
+        <div class="col-lg-6">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                {{#each reg in filteredRegistrations}}
+                    <tr>
+                        <td>{{reg.Name}}</td>
+                        <td>{{reg.Status}}</td>
+                        <td>
+                            <button {{action 'remove' reg}} class="btn-link">REMOVE FROM THIS EVENT</button>
+                        </td>
+                    </tr>
+                {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</div>
-
-
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th><th>Status</th>
-                <th>Type</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-    {{#each reg in filteredRegistrations}}
-        <tr>
-            <td>{{reg.Name}}</td>
-            <td>{{reg.Status}}</td>
-            <td>{{reg.Type}}</td>
-            <td>
-                <button {{action 'remove' reg}} class="btn-link">REMOVE FROM THIS EVENT</button>
-            </td>
-        </tr>
-    {{/each}}
-        </tbody>
-    </table>
 </div>

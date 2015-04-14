@@ -695,7 +695,7 @@ class SFEvent(SFObject):
         return self.registrations(
             registration["Event__c"], registration["Event_Date__c"])
 
-    def register_new(self, event_id, event_date, person_id):
+    def register_new(self, event_id, event_date, person_id, status):
         """
         Add a registration for the person or sign them in.
         """
@@ -717,13 +717,13 @@ class SFEvent(SFObject):
                 "Contact__c": person_id,
                 "Event__c": event_id,
                 "Event_Date__c": event_date,
-                "Status__c": "Signed-In",
+                "Status__c": status,
             }
             self.connection.Registration__c.create(sf_record)
         else:
             # Update the status on the registration
             sf_record = {
-                "Status__c": "Signed-In",
+                "Status__c": status,
             }
             registration_id = results["records"][0]["Id"]
             self.connection.Registration__c.update(registration_id, sf_record)

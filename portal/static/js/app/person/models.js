@@ -256,13 +256,17 @@ App.Event.reopenClass({
         });
     },
 
-    signInNew: function(eventId, registrationDate, personId) {
+    signInNew: function(eventId, registrationDate, personId, status) {
+        if (!status) {
+            status = 'Signed-In';
+        }
         return ajax(this.url + '/registration/new', {
             type: 'POST',
             data: JSON.stringify({
                 event_id: eventId,
                 registration_date: registrationDate,
-                person_id: personId
+                person_id: personId,
+                status: status
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"

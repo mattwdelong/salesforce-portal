@@ -223,5 +223,6 @@ def api_event_registration_new():
     registrations = sf.register_new(
         request.json["event_id"],
         request.json["registration_date"],
-        request.json["person_id"])
+        request.json["person_id"],
+        request.json["status"])
     return jsonify(response="Success", registrations=registrations)

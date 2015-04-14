@@ -3,11 +3,6 @@ App.EventController = Ember.ObjectController.extend({
     registration_date: moment().format('YYYY-MM-DD'),
     searchResultsComplete: [],
     searchResults: [],
-    status_options: [{name:'ALL', selected: true},
-                     {name:'Attended', selected: false},
-                     {name:'Signed-In', selected:false},
-                     {name:'Signed-Out', selected:false}],
-    status: 'ALL',
     filteredCount: 0,
     type_options: [{name:'ALL', selected: true},
                      {name:'Child', selected:false},
@@ -15,16 +10,11 @@ App.EventController = Ember.ObjectController.extend({
                      {name:'Adult', selected:false},
                      {name:'Senior', selected: false}],
     type: 'ALL',
-    kids_options: [{name:'ALL', selected: true},
-                     {name:'Preschool', selected: false},
-                     {name:'Primary', selected:false}],
-    kids: 'ALL',
 
     reset: function() {
         console.log('reset');
-        this.set('status', null);
-        this.set('status', 'ALL');
         this.set('filteredCount', this.get('registrations').length);
+        this.set('filteredRegistrations', this.filter());
     }.observes('registrations'),
 
     getPermissions: function() {
@@ -57,37 +47,14 @@ App.EventController = Ember.ObjectController.extend({
     },
 
     filter: function() {
-        var status = this.get('status');
-        var group;
-        if (this.get('model.Type__c') == 'Kidswork') {
-            group = this.get('kids');
-        } else {
-            group = this.get('type');
-        }
-
-        if ((status == 'ALL') && (group == 'ALL')) {
-            this.set('filteredCount', this.get('registrations').length);
-            this.set('searchResults', this.get('searchResultsComplete'));
-            return this.get('registrations');
-        }
-
-        var filtered;
+        var group = this.get('type');
+        var registrations = this.get('registrations');
         var search = this.get('searchResultsComplete');
 
-        // Filter the list based on the status
-        if (status == 'ALL') {
-            filtered = this.get('registrations');
-        } else {
-            var rx1 = new RegExp(status, 'gi');
-            filtered = this.get('registrations').filter(function (r) {
-                return r.Status.match(rx1);
-            });
-        }
-
-        // Filter the list based on the group
+        // Filter the lists based on the group
         if (group != 'ALL') {
             var rx = new RegExp(group, 'gi');
-            filtered = filtered.filter(function (r) {
+            registrations = registrations.filter(function (r) {
                 return r.Type.match(rx);
             });
             search = search.filter(function (r) {
@@ -95,14 +62,15 @@ App.EventController = Ember.ObjectController.extend({
             });
         }
 
-        this.set('filteredCount', filtered.length);
+        this.set('filteredCount', registrations.length);
         this.set('searchResults', search);
-        return filtered;
+        return registrations;
     },
 
     filteredRegistrations: function() {
+        console.log('filteredRegistrations');
         return this.filter();
-    }.property('arrangedContent', "status", "type", "kids"),
+    }.property('arrangedContent', 'type'),
 
     isKidswork: function() {
         if (this.get('model.Type__c') == 'Kidswork') {
@@ -129,20 +97,9 @@ App.EventController = Ember.ObjectController.extend({
     },
 
     actions: {
-        setStatus: function(opt) {
-            this.set('status', opt.name);
-            var options =  this.setOption(opt, 'status', 'status_options');
-            this.set('status_options', options);
-        },
-
-        setKidsGroup: function(opt) {
-            this.set('kids', opt.name);
-            var options =  this.setOption(opt, 'kids', 'kids_options');
-            this.set('kids_options', options);
-        },
-
         setTypeGroup: function(opt) {
             this.set('type', opt.name);
+            this.set('filteredRegistrations', this.filter());
             var options =  this.setOption(opt, 'type', 'type_options');
             this.set('type_options', options);
         },
@@ -154,7 +111,7 @@ App.EventController = Ember.ObjectController.extend({
             var registrationDate = controller.get('registration_date');
             var personId = person.Id;
 
-            App.Event.signInNew(eventId, registrationDate, personId).then(function(data) {
+            App.Event.signInNew(eventId, registrationDate, personId, 'Attended').then(function(data) {
                 controller.set('registrations', data.registrations);
 
                 // Remove the person from the search results
