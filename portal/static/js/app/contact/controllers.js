@@ -84,35 +84,36 @@ App.ContactController = Ember.ObjectController.extend({
         },
 
         selectSmallGroup: function(sg) {
-            var controller = this;
-            controller.set("inProgress", true);
+            this.set("inProgress", true);
 
             // Check if the small group is selected
-            var index = controller.get("smallGroupsSelected").indexOf(sg);
+            var index = this.get("smallGroupsSelected").indexOf(sg);
             if (index >= 0) {
                 // The small group is already selected
                 return;
             }
 
             // Add the small group to the list of selected groups
-            controller.get("smallGroupsSelected").pushObject(sg);
+            this.get("smallGroupsSelected").pushObject(sg);
+
+            // Remove the small group to the unselected groups list
+            this.get("small_groups").removeObject(sg);
 
             // Refresh the teams and membership list in the view
-            controller.refreshTeamsView();
+            this.refreshTeamsView();
         },
 
         deselectSmallGroup: function(sg) {
-            var controller = this;
-            controller.set("inProgress", true);
+            this.set("inProgress", true);
 
             // Remove the small group from the selected groups list
-            controller.get("smallGroupsSelected").removeObject(sg);
+            this.get("smallGroupsSelected").removeObject(sg);
 
             // Add the small group to the unselected groups list
-            controller.get("smallGroupsUnselected").addObject(sg);
+            this.get("small_groups").pushObject(sg);
 
             // Refresh the teams and membership list in the view
-            controller.refreshTeamsView();
+            this.refreshTeamsView();
         }
     }
 });
