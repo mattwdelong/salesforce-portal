@@ -21,6 +21,13 @@ App.ContactController = Ember.ObjectController.extend({
         var controller = this;
         var selectedTeamIds = [];
         var selectedGroupIds = [];
+
+        // Sort the teams lists by name
+        var sorted = controller.get("teamsSelected").sortBy('Name');
+        var sortedUn = controller.get("teamsUnselected").sortBy('Name');
+        controller.set("teamsSelected", sorted);
+        controller.set("teamsUnselected", sortedUn);
+
         controller.get("teamsSelected").forEach(function(t) {
             selectedTeamIds.push(t.Id);
         });
@@ -43,25 +50,23 @@ App.ContactController = Ember.ObjectController.extend({
 
     actions: {
         selectTeam: function(team) {
-            var controller = this;
-            controller.set("inProgress", true);
+            this.set("inProgress", true);
 
             // Toggle the selection of the team
-            var index = controller.get("teamsSelected").indexOf(team);
+            var index = this.get("teamsSelected").indexOf(team);
             if (index >= 0) {
                 // The team is already selected
                 return;
             }
 
             // Add the team to the list of selected teams
-            controller.get("teamsSelected").pushObject(team);
+            this.get("teamsSelected").pushObject(team);
 
             // Remove the team from the unselected team list
-            var index = controller.get("teamsUnselected").indexOf(team);
-            controller.get("teamsUnselected").splice(index, 1);
+            this.get("teamsUnselected").removeObject(team);
 
             // Refresh the teams and membership list in the view
-            controller.refreshTeamsView();
+            this.refreshTeamsView();
         },
 
         deselectTeam: function(team) {

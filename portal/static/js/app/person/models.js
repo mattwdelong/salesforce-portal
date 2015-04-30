@@ -7,7 +7,6 @@ function ajax (url, options) {
     options.url = url;
 
     Ember.$.ajax(options).done(function (data) {
-        console.log(data);
         if (data.response == 'Success') {
             resolve(data);
         } else {

@@ -444,6 +444,7 @@ class SFContact(SFObject):
             soql = """
                 select Id, Name, TrackAttenders__c from Team__c
                 where Team__c.IsActive__c=true
+                order by Name
             """
         else:
             soql = """
@@ -452,6 +453,7 @@ class SFContact(SFObject):
                 from ContactTeamLink__c
                 where Team__r.IsActive__c=true
                 and Contact__c = '%s'
+                order by Name
             """ % session['user_id']
         teams = self.connection.query(soql)
 
