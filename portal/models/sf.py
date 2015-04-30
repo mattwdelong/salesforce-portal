@@ -453,7 +453,7 @@ class SFContact(SFObject):
                 from ContactTeamLink__c
                 where Team__r.IsActive__c=true
                 and Contact__c = '%s'
-                order by Name
+                order by Team__r.Name
             """ % session['user_id']
         teams = self.connection.query(soql)
 
@@ -487,6 +487,7 @@ class SFContact(SFObject):
             soql = """
                 select Id, Name from Life_Group__c
                 where Active__c=true
+                order by Name
             """
         else:
             soql = """
@@ -494,6 +495,7 @@ class SFContact(SFObject):
                 from ContactLifeGroup__c
                 where Life_Group__r.Active__c=true
                 and Contact__c = '%s'
+                order by Life_Group__r.Name
             """ % session['user_id']
         groups = self.connection.query(soql)
 
