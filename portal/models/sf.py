@@ -625,7 +625,7 @@ class SFEvent(SFObject):
             from Registration__c
             where Event_Date__c=%s
             and Event__c='%s'
-            order by Contact__r.LastName, Contact__r.FirstName
+            order by Contact__r.FirstName, Contact__r.LastName
         """ % (event_date, event_id)
         reg_list = self.connection.query(soql)
 

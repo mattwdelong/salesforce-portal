@@ -2,7 +2,6 @@ from flask import render_template, jsonify, request, session
 from portal import app
 from portal.models.sf import SFPerson, SFContact, SFEvent
 from portal.authorize import login_required
-from portal.utils import is_testing
 
 
 @app.route('/')
