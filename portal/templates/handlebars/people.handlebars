@@ -21,22 +21,27 @@
         {{/if}}
     </div>
 </div>
-
-{{#if model}}
-<table class="table">
-    <thead>
+<div class="col-xs-3 col-md-3 col-lg-3">
+    {{#if model}}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th><th>Type</th>
+            </tr>
+        </thead>
+        <tbody>
+    {{#each person in model}}
         <tr>
-            <th>Firstname</th><th>Lastname</th><th>Type</th>
+            <td>{{#link-to 'person' person.Id}}{{person.FirstName}} {{person.LastName}}{{/link-to}}</td>
+            <!--td>{{#link-to 'person' person.Id}}{{person.LastName}}{{/link-to}}</td-->
+            <td>{{person.Contact_Type__c}}</td>
         </tr>
-    </thead>
-    <tbody>
-{{#each person in model}}
-    <tr>
-        <td>{{#link-to 'person' person.Id}}{{person.FirstName}}{{/link-to}}</td>
-        <td>{{#link-to 'person' person.Id}}{{person.LastName}}{{/link-to}}</td>
-        <td>{{person.Contact_Type__c}}</td>
-    </tr>
-{{/each}}
-    </tbody>
-</table>
-{{/if}}
+    {{/each}}
+        </tbody>
+    </table>
+    {{/if}}
+</div>
+
+<div class="col-xs-9 col-md-9 col-lg-9">
+    {{outlet}}
+</div>
