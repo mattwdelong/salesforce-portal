@@ -138,7 +138,7 @@ class SFPerson(SFObject):
               order by Name""")
 
         in_teams = self.connection.query("""
-              select Id, Name, Team__r.Id, Access__c
+              select Id, Name, Team__r.Id
               from ContactTeamLink__c
               where Team__r.IsActive__c=true
               and Contact__c='%s'""" % sf_id)
@@ -152,6 +152,12 @@ class SFPerson(SFObject):
                 "access_contact": False,
                 "access_manage": False,
             }
+
+            # The current user can manage this team, though person may not be
+            # in the team
+            if ts["Id"] in manageable_teams:
+                team["access_manage"] = True
+
             for ct in in_teams["records"]:
                 if ts["Id"] == ct["Team__r"]["Id"]:
                     team["in_team"] = True
@@ -241,13 +247,11 @@ class SFPerson(SFObject):
         """
         team = {
             "in_team": True,
-            "access_contact": False,
-            "access_manage": False
         }
 
         # Get the current team membership
         in_team = self.connection.query("""
-              select Id, Name, Team__r.Id, Access__c
+              select Id, Name, Team__r.Id
               from ContactTeamLink__c
               where Team__r.IsActive__c=true
               and Contact__c='%s' and Team__r.Id='%s'""" %
@@ -263,10 +267,9 @@ class SFPerson(SFObject):
             sf_record = {
                 'Contact__c': contact_id,
                 'Team__c': team_id,
-                "Access__c": "",
             }
             self.connection.ContactTeamLink__c.create(sf_record)
-            team["access"] = True
+            team["in_team"] = True
 
         return team
 
@@ -450,7 +453,7 @@ class SFContact(SFObject):
             soql = """
                 select Id, Name, Access__c, Team__r.Id, Team__r.Name,
                        Team__r.TrackAttenders__c
-                from ContactTeamLink__c
+                from Contact_PortalGroup_Link__c
                 where Team__r.IsActive__c=true
                 and Contact__c = '%s'
                 order by Team__r.Name

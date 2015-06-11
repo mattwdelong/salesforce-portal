@@ -438,8 +438,6 @@ App.PersonController = Ember.ObjectController.extend({
             App.Person.updateTeam(
                 this.get("model").Id, team.team_id).then(function(data) {
                 team.in_team = data.team.in_team;
-                team.access_manage =  data.team.access_manage;
-                team.access_contact =  data.team.access_contact;
 
                 // Update the view
                 controller.get("model").team_serving.forEach(function (t) {
