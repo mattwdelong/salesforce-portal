@@ -135,12 +135,14 @@ class SFPerson(SFObject):
         teams = self.connection.query("""
               select Id, Name from Team__c
               where IsActive__c=true
+              and Is_Team_Serving__c=true
               order by Name""")
 
         in_teams = self.connection.query("""
               select Id, Name, Team__r.Id
               from ContactTeamLink__c
               where Team__r.IsActive__c=true
+              and Team__r.Is_Team_Serving__c=true
               and Contact__c='%s'""" % sf_id)
 
         team_list = []
