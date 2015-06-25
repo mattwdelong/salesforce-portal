@@ -217,19 +217,37 @@
 
 {{#if isAdmin}}
 <div class="panel panel-default">
-    <div class="panel-heading"><h3 class="panel-title">Team Serving Permissions</h3></div>
+    <div class="panel-heading"><h3 class="panel-title">Team Permissions</h3></div>
     <div class="panel-body">
         <div class="col-lg-12">
-            <p>Select the teams that {{model.FirstName}} is allowed to contact and/or manage. Admin users can manage all team memberships.</p>
+            <em>Select the teams that {{model.FirstName}} is allowed to contact and/or manage. Admin users can manage all team memberships.</em>
+            <h4>Teams</h4>
             {{#each ts in model.team_permissions}}
-                {{#if ts.in_team}}
-                    {{#if ts.access_manage}}
-                        <button {{action 'toggleTeamPermissions' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Manage</span></button>
+                {{#if ts.is_team_serving}}
+                    {{#if ts.in_team}}
+                        {{#if ts.access_manage}}
+                            <button {{action 'toggleTeamPermissions' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Manage</span></button>
+                        {{else}}
+                            <button {{action 'toggleTeamPermissions' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Contact</span></button>
+                        {{/if}}
                     {{else}}
-                        <button {{action 'toggleTeamPermissions' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Contact</span></button>
+                    <button {{action 'toggleTeamPermissions' ts}}>{{ ts.team_name }}</button>
                     {{/if}}
-                {{else}}
-                <button {{action 'toggleTeamPermissions' ts}}>{{ ts.team_name }}</button>
+                {{/if}}
+            {{/each}}
+            <hr />
+            <h4>Core Teams</h4>
+            {{#each ts in model.team_permissions}}
+                {{#if ts.is_core_team}}
+                    {{#if ts.in_team}}
+                        {{#if ts.access_manage}}
+                            <button {{action 'toggleTeamPermissions' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Manage</span></button>
+                        {{else}}
+                            <button {{action 'toggleTeamPermissions' ts}} class="btn btn-primary">{{ ts.team_name }} <span class="badge">Contact</span></button>
+                        {{/if}}
+                    {{else}}
+                    <button {{action 'toggleTeamPermissions' ts}}>{{ ts.team_name }}</button>
+                    {{/if}}
                 {{/if}}
             {{/each}}
         </div>

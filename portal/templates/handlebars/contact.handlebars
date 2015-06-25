@@ -5,10 +5,23 @@
     <div class="panel-body">
         <h4>Teams</h4>
         {{#each team in teamsUnselected}}
-            {{#if team.Access}}
-                <button {{action 'selectTeam' team}}>{{ team.Name }}</button>
-            {{else}}
-                <label class="label label-default">{{team.Name}}</label>
+            {{#if team.is_team_serving}}
+                {{#if team.Access}}
+                    <button {{action 'selectTeam' team}}>{{ team.Name }}</button>
+                {{else}}
+                    <label class="label label-default">{{team.Name}}</label>
+                {{/if}}
+            {{/if}}
+        {{/each}}
+        <hr />
+        <h4>Core Teams</h4>
+        {{#each team in teamsUnselected}}
+            {{#if team.is_core_team}}
+                {{#if team.Access}}
+                    <button {{action 'selectTeam' team}}>{{ team.Name }}</button>
+                {{else}}
+                    <label class="label label-default">{{team.Name}}</label>
+                {{/if}}
             {{/if}}
         {{/each}}
         <hr />

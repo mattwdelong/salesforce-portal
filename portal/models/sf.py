@@ -212,12 +212,13 @@ class SFPerson(SFObject):
         """
         # Full list of active teams
         teams = self.connection.query("""
-              select Id, Name from Team__c
+              select Id, Name, Is_Team_Serving__c, HasCoreTeam__c from Team__c
               where IsActive__c=true
               order by Name""")
 
         in_teams = self.connection.query("""
-              select Id, Name, Team__r.Id, Access__c
+              select Id, Name, Team__r.Id, Team__r.Is_Team_Serving__c,
+                     Team__r.HasCoreTeam__c, Access__c
               from Contact_PortalGroup_Link__c
               where Team__r.IsActive__c=true
               and Contact__c='%s'""" % sf_id)
@@ -230,6 +231,8 @@ class SFPerson(SFObject):
                 "in_team": False,
                 "access_contact": False,
                 "access_manage": False,
+                "is_team_serving": ts["Is_Team_Serving__c"],
+                "is_core_team": ts["HasCoreTeam__c"],
             }
             for ct in in_teams["records"]:
                 if ts["Id"] == ct["Team__r"]["Id"]:
@@ -447,14 +450,16 @@ class SFContact(SFObject):
         if session['role'] == "Admin":
             # Get all the teams
             soql = """
-                select Id, Name, TrackAttenders__c from Team__c
+                select Id, Name, TrackAttenders__c, Is_Team_Serving__c,
+                       HasCoreTeam__c from Team__c
                 where Team__c.IsActive__c=true
                 order by Name
             """
         else:
             soql = """
                 select Id, Name, Access__c, Team__r.Id, Team__r.Name,
-                       Team__r.TrackAttenders__c
+                       Team__r.TrackAttenders__c, Team__r.Is_Team_Serving__c,
+                       Team__r.HasCoreTeam__c
                 from Contact_PortalGroup_Link__c
                 where Team__r.IsActive__c=true
                 and Contact__c = '%s'
@@ -470,6 +475,8 @@ class SFContact(SFObject):
                     "Name": t["Name"],
                     "Access": "Manage",
                     "TrackAttenders": t["TrackAttenders__c"],
+                    "is_team_serving": t["Is_Team_Serving__c"],
+                    "is_core_team": t["HasCoreTeam__c"],
                     "Selected": False,
                 }
             else:
@@ -478,6 +485,8 @@ class SFContact(SFObject):
                     "Name": t["Team__r"]["Name"],
                     "Access": t["Access__c"],
                     "TrackAttenders": t["Team__r"]["TrackAttenders__c"],
+                    "is_team_serving": t["Team__r"]["Is_Team_Serving__c"],
+                    "is_core_team": t["Team__r"]["HasCoreTeam__c"],
                     "Selected": False,
                 }
             records.append(record)
