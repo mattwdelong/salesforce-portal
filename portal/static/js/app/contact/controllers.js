@@ -36,7 +36,8 @@ App.ContactController = Ember.ObjectController.extend({
         });
 
         // Fetch the members of the selected team and add to member list
-        App.Contact.team_members(selectedTeamIds, selectedGroupIds).then(function (data) {
+        App.Contact.team_members(sorted, sortedUn).then(function (data) {
+            console.log(data);
             var members = [];
             data.members.forEach(function(m) {
                 if (m.Email) {
@@ -44,6 +45,7 @@ App.ContactController = Ember.ObjectController.extend({
                 }
             });
             controller.set("members", members);
+            controller.set("people", data.members.sortBy('Name'));
             controller.set("inProgress", false);
         });
     },

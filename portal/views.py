@@ -140,31 +140,41 @@ def api_team_members():
     """
     Get the people in a team.
     """
-    members = []
+    members = {}
 
-    team_ids = request.json["selected_teams"]
-    group_ids = request.json["selected_small_groups"]
+    teams = request.json["selected_teams"]
+    small_groups = request.json["selected_small_groups"]
 
     sf = SFContact()
-    for t in team_ids:
-        team_members = sf.team_members(t)
+    for t in teams:
+        team_members = sf.team_members(t["Id"])
         for member in team_members:
-            if member not in members:
-                members.append(member)
+            if member["Id"] in members:
+                members[member["Id"]]["teams"].append(t)
+            else:
+                members[member["Id"]] = member
+                members[member["Id"]]["teams"] = [t]
 
-    for t in team_ids:
-        team_members = sf.core_team_members(t)
+    for t in teams:
+        team_members = sf.core_team_members(t["Id"])
         for member in team_members:
-            if member not in members:
-                members.append(member)
+            if member["Id"] in members:
+                members[member["Id"]]["teams"].append(t)
+            else:
+                members[member["Id"]] = member
+                members[member["Id"]]["teams"] = [t]
 
-    for t in group_ids:
-        group_members = sf.small_group_members(t)
+    for t in small_groups:
+        group_members = sf.small_group_members(t["Id"])
         for member in group_members:
-            if member not in members:
-                members.append(member)
+            if member["Id"] in members:
+                members[member["Id"]]["teams"].append(t)
+            else:
+                members[member["Id"]] = member
+                members[member["Id"]]["teams"] = [t]
 
-    return jsonify(response="Success", members=members)
+    return jsonify(
+        response="Success", members=[value for key, value in members.items()])
 
 
 @app.route('/api/event', methods=['POST'])

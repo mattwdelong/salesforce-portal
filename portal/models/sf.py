@@ -474,6 +474,7 @@ class SFContact(SFObject):
                     "Id": t["Id"],
                     "Name": t["Name"],
                     "Access": "Manage",
+                    "access_manage": True,
                     "TrackAttenders": t["TrackAttenders__c"],
                     "is_team_serving": t["Is_Team_Serving__c"],
                     "is_core_team": t["HasCoreTeam__c"],
@@ -484,6 +485,8 @@ class SFContact(SFObject):
                     "Id": t["Team__r"]["Id"],
                     "Name": t["Team__r"]["Name"],
                     "Access": t["Access__c"],
+                    "access_manage": True
+                        if t["Access__c"]=="Manage" else False,
                     "TrackAttenders": t["Team__r"]["TrackAttenders__c"],
                     "is_team_serving": t["Team__r"]["Is_Team_Serving__c"],
                     "is_core_team": t["Team__r"]["HasCoreTeam__c"],
@@ -536,9 +539,11 @@ class SFContact(SFObject):
         Get the members of the team.
         """
         soql = """
-            select Contact__r.Id, Contact__r.Name, Contact__r.Email
+            select Contact__r.Id, Contact__r.Name, Contact__r.Email,
+                   Team__r.Name
             from ContactTeamLink__c
             where Team__r.IsActive__c=true
+            and Contact__r.Active__c=true
             and Team__r.Id = '%s'
         """ % team_id
         teams = self.connection.query(soql)
@@ -549,6 +554,7 @@ class SFContact(SFObject):
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
                 "Email": t["Contact__r"]["Email"],
+                "TeamName": t["Team__r"]["Name"],
             })
 
         return members
@@ -558,9 +564,11 @@ class SFContact(SFObject):
         Get the members of the core team.
         """
         soql = """
-            select Contact__r.Id, Contact__r.Name, Contact__r.Email
+            select Contact__r.Id, Contact__r.Name, Contact__r.Email,
+                   Team__r.Name
             from ContactCoreTeamLink__c
             where Team__r.IsActive__c=true
+            and Contact__r.Active__c=true
             and Team__r.Id = '%s'
         """ % team_id
         teams = self.connection.query(soql)
@@ -571,6 +579,7 @@ class SFContact(SFObject):
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
                 "Email": t["Contact__r"]["Email"],
+                "TeamName": t["Team__r"]["Name"],
             })
 
         return members
@@ -580,9 +589,11 @@ class SFContact(SFObject):
         Get the members of the small group.
         """
         soql = """
-            select Contact__r.Id, Contact__r.Name, Contact__r.Email
+            select Contact__r.Id, Contact__r.Name, Contact__r.Email,
+                   Life_Group__r.Name
             from ContactLifeGroup__c
             where Life_Group__r.Active__c=true
+            and Contact__r.Active__c=true
             and Life_Group__r.Id = '%s'
         """ % small_group_id
         groups = self.connection.query(soql)
@@ -593,6 +604,7 @@ class SFContact(SFObject):
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
                 "Email": t["Contact__r"]["Email"],
+                "TeamName": t["Team__r"]["Name"],
             })
 
         return members
