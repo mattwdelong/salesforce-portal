@@ -230,7 +230,7 @@ class SFPerson(SFObject):
                 "team_name": ts["Name"],
                 "in_team": False,
                 "access_contact": False,
-                "access_manage": False,
+                "access_manage": True if session['role'] == 'Admin' else False,
                 "is_team_serving": ts["Is_Team_Serving__c"],
                 "is_core_team": ts["HasCoreTeam__c"],
             }
@@ -413,7 +413,9 @@ class SFPerson(SFObject):
         Get the user by the Email address.
         """
         people = self.connection.query("""
-            select Id, Portal_Google_Account__c, Portal_Role__c, Name
+            select Id, Portal_Google_Account__c, Portal_Role__c, Name,
+              (select Id from Contact_PortalGroup_Links__r
+               where Access__c='Manage')
             from Contact
             where Portal_Google_Account__c = '%s'
         """ % email)
@@ -540,7 +542,7 @@ class SFContact(SFObject):
         """
         soql = """
             select Contact__r.Id, Contact__r.Name, Contact__r.Email,
-                   Team__r.Name
+                   Contact__r.MobilePhone, Team__r.Name
             from ContactTeamLink__c
             where Team__r.IsActive__c=true
             and Contact__r.Active__c=true
@@ -554,6 +556,7 @@ class SFContact(SFObject):
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
                 "Email": t["Contact__r"]["Email"],
+                "Mobile": t["Contact__r"]["MobilePhone"],
                 "TeamName": t["Team__r"]["Name"],
             })
 
@@ -565,7 +568,7 @@ class SFContact(SFObject):
         """
         soql = """
             select Contact__r.Id, Contact__r.Name, Contact__r.Email,
-                   Team__r.Name
+                   Contact__r.MobilePhone, Team__r.Name
             from ContactCoreTeamLink__c
             where Team__r.IsActive__c=true
             and Contact__r.Active__c=true
@@ -579,6 +582,7 @@ class SFContact(SFObject):
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
                 "Email": t["Contact__r"]["Email"],
+                "Mobile": t["Contact__r"]["MobilePhone"],
                 "TeamName": t["Team__r"]["Name"],
             })
 
@@ -590,7 +594,7 @@ class SFContact(SFObject):
         """
         soql = """
             select Contact__r.Id, Contact__r.Name, Contact__r.Email,
-                   Life_Group__r.Name
+                   Contact__r.MobilePhone, Life_Group__r.Name
             from ContactLifeGroup__c
             where Life_Group__r.Active__c=true
             and Contact__r.Active__c=true
@@ -604,6 +608,7 @@ class SFContact(SFObject):
                 "Id": t["Contact__r"]["Id"],
                 "Name": t["Contact__r"]["Name"],
                 "Email": t["Contact__r"]["Email"],
+                "Mobile": t["Contact__r"]["MobilePhone"],
                 "TeamName": t["Team__r"]["Name"],
             })
 

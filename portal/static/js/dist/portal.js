@@ -9,6 +9,7 @@ App.Router.map(function() {
     this.resource('people', { path: '/people' }, function() {
         this.resource('person', { path: '/:Id' });
     });
+    this.resource('team', { path: '/team'});
     this.resource('contact', { path: '/contact'});
     this.resource('events', { path: '/events'});
     this.resource('event_kidswork', { path: '/event/:Id/kidswork' });
@@ -663,6 +664,8 @@ App.Person.reopenClass({
     },
 
     updateTeam: function(contactId, teamId) {
+        console.log('updateTeam');
+        console.log(teamId);
         return ajax(this.url + '/' + contactId + '/team/' + teamId, {
             type: 'POST',
             data: JSON.stringify({}),
@@ -845,6 +848,23 @@ App.Event.reopenClass({
         });
     }
 });
+
+
+App.Team = Ember.Object.extend({});
+
+App.Team.reopenClass({
+    url: '/api/team',
+
+    all: function() {
+        return ajax(this.url, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    }
+
+});
 ;function getPermissions(controller) {
     App.Person.permissions().then(function(result) {
         controller.set('permissions', result.permissions);
@@ -962,5 +982,87 @@ App.EventKidsworkRoute = Ember.Route.extend({
     setupController: function(controller, model) {
         controller.set('content', model);
         getPermissions(controller);
+    }
+});
+
+App.TeamRoute = Ember.Route.extend({
+    model: function(params) {
+        return App.Team.all().then( function(data) {
+            return data.teams;
+        });
+    },
+
+    setupController: function(controller, model) {
+        controller.set('content', model);
+        getPermissions(controller);
+    }
+});
+;
+App.TeamController = Ember.ArrayController.extend({
+
+    getPermissions: function() {
+        getPermissions(this);
+    },
+
+    findTeams: function() {
+        var controller = this;
+
+        App.Team.all().then(function(data) {
+            console.log(data.teams);
+
+        }).catch(function(error) {
+            controller.set('error', error.message);
+        });
+    },
+
+    removePerson: function(person) {
+        this.get("people").removeObject(person);
+    },
+
+    actions: {
+        selectTeam: function(team) {
+            var controller = this;
+            controller.set("inProgress", true);
+            team.Id = team.team_id;
+            controller.set('selectedTeam', team);
+
+            // Make sure that only this team is selected
+            var teams = [];
+            controller.get('model').forEach(function(t) {
+                if (t.team_id == team.team_id) {
+                    t.selected = true;
+                } else {
+                    t.selected = false;
+                }
+                teams.push(t);
+            });
+            controller.set("model", teams);
+
+            // Fetch the members of the selected team and add to member list
+            App.Contact.team_members([team], []).then(function (data) {
+                controller.set("people", data.members.sortBy('Name'));
+                controller.set("inProgress", false);
+            });
+        },
+
+        removeFromGroup: function(person, team) {
+            var controller = this;
+
+            if (person.is_core_team) {
+                App.Person.updateCoreTeam(person.Id, team.team_id).then(function(data) {
+                    // Remove the person from the members list
+                    controller.removePerson(person);
+                }).catch(function(error) {
+                    controller.set('error', error.message);
+                });
+            } else {
+                App.Person.updateTeam(person.Id, team.team_id).then(function (data) {
+                    // Remove the person from the members list
+                    controller.removePerson(person);
+                }).catch(function (error) {
+                    controller.set('error', error.message);
+                });
+            }
+        }
     }
 });

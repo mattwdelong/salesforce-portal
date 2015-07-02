@@ -56,34 +56,3 @@
         </code>
     </div>
 </div>
-
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">{{#if inProgress}}<img src="/static/images/ajax-loader.gif" /> {{/if}}People</h3>
-    </div>
-    <div class="panel-body">
-        <div>
-            <table class="table">
-            <thead>
-                <tr>
-                    <th>Name</th><th>Manage Team Membership</th>
-                </tr>
-            </thead>
-            {{#each p in people}}
-                <tr>
-                    <td>{{p.Name}}</td>
-                    <td>
-                        {{#each t in p.teams}}
-                            {{#if t.access_manage}}
-                                <button class="btn btn-primary">{{t.Name}} <span class="badge">Remove</span></button>
-                            {{else}}
-                                <label class="label label-success">{{t.Name}}</label>
-                            {{/if}}
-                        {{/each}}
-                    </td>
-                </tr>
-            {{/each}}
-            </table>
-        </div>
-    </div>
-</div>

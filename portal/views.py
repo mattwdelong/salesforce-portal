@@ -235,3 +235,11 @@ def api_event_registration_new():
         request.json["person_id"],
         request.json["status"])
     return jsonify(response="Success", registrations=registrations)
+
+
+@app.route('/api/team', methods=['POST'])
+@login_required
+def api_team():
+    sf = SFPerson()
+    teams = sf.person_team_serving_permissions(session['user_id'])
+    return jsonify(response="Success", teams=teams)

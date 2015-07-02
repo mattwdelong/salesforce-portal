@@ -48,6 +48,9 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li id="nav-home" data-toggle="collapse" data-target=".nav-collapse"><a href="/home">Home</a></li>
+            {% if session.role == 'Admin' or session.manage_teams > 0 %}
+            <li id="nav-team" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/team">Teams</a></li>
+            {%  endif %}
             {% if session.role in ['Standard','Admin','Leader'] %}
             <li id="nav-contact" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/contact">Contact</a></li>
             {% endif %}

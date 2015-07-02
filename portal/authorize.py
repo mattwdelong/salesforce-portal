@@ -95,4 +95,5 @@ def check_user(email):
         session['user_id'] = user["Id"]
         session['role'] = user["Portal_Role__c"]
         session['name'] = user["Name"]
+        session['manage_teams'] = len(user['Contact_PortalGroup_Links__r'] or [])
         return True

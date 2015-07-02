@@ -117,3 +117,16 @@ App.EventKidsworkRoute = Ember.Route.extend({
         getPermissions(controller);
     }
 });
+
+App.TeamRoute = Ember.Route.extend({
+    model: function(params) {
+        return App.Team.all().then( function(data) {
+            return data.teams;
+        });
+    },
+
+    setupController: function(controller, model) {
+        controller.set('content', model);
+        getPermissions(controller);
+    }
+});

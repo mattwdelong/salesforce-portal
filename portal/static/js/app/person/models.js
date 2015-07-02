@@ -123,6 +123,8 @@ App.Person.reopenClass({
     },
 
     updateTeam: function(contactId, teamId) {
+        console.log('updateTeam');
+        console.log(teamId);
         return ajax(this.url + '/' + contactId + '/team/' + teamId, {
             type: 'POST',
             data: JSON.stringify({}),
@@ -304,4 +306,21 @@ App.Event.reopenClass({
             dataType: "json"
         });
     }
+});
+
+
+App.Team = Ember.Object.extend({});
+
+App.Team.reopenClass({
+    url: '/api/team',
+
+    all: function() {
+        return ajax(this.url, {
+            type: 'POST',
+            data: JSON.stringify({}),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+    }
+
 });
