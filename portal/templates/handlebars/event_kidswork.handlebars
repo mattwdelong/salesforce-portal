@@ -36,11 +36,16 @@
                     <tr>
                         <th class="small"></th><th>Name</th><th></th><th>Group</th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th>Parents</th>
                     </tr>
-
                     {{#each r in searchResults}}
                         <tr>
                             <td class="small"><button class="btn btn-default" {{action 'showPerson' r.Id}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
-                            <td>{{r.Name}}</td>
+                            <td>
+                                {{#if r.selected}}
+                                    <span class="done">{{r.Name}}</span>
+                                {{else}}
+                                    {{r.Name}}
+                                {{/if}}
+                            </td>
                             <td><button {{action 'signInNew' r}} class="btn-link">SIGN IN</button></td>
                             <td>{{r.Kids_Group__c}}</td>
                             <td class="cell-center">{{r.Child_Tag_Number__c}}</td>

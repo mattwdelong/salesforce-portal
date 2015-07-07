@@ -104,3 +104,7 @@ button .glyphicon {
     background-repeat: no-repeat;
     width: 16px;
 }
+
+.done {
+    text-decoration: line-through;
+}

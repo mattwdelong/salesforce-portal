@@ -344,12 +344,23 @@ App.EventKidsworkController = Ember.ObjectController.extend({
         signInNew: function(person) {
             var controller = this;
 
+            var people = controller.get("searchResults").map(function(p) {
+               if (p.Id != person.Id) {
+                   p.selected = false;
+               } else {
+                   p.selected = true;
+               }
+                return p;
+            });
+            controller.set("searchResults", people);
+
             var eventId = controller.get('model.Id');
             var registrationDate = controller.get('registration_date');
             var personId = person.Id;
 
             App.Event.signInNew(eventId, registrationDate, personId).then(function(data) {
                 controller.set('registrations', data.registrations);
+                controller.get("searchResults").removeObject(person);
             });
         }.observes('registrations'),
 
