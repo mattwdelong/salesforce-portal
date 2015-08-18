@@ -144,6 +144,7 @@ def api_team_members():
 
     teams = request.json["selected_teams"]
     small_groups = request.json["selected_small_groups"]
+    categories = request.json["selected_categories"]
 
     sf = SFContact()
     for t in teams:
@@ -167,6 +168,15 @@ def api_team_members():
     for t in small_groups:
         group_members = sf.small_group_members(t["Id"])
         for member in group_members:
+            if member["Id"] in members:
+                members[member["Id"]]["teams"].append(t)
+            else:
+                members[member["Id"]] = member
+                members[member["Id"]]["teams"] = [t]
+
+    for t in categories:
+        category_members = sf.category_members(t)
+        for member in category_members:
             if member["Id"] in members:
                 members[member["Id"]]["teams"].append(t)
             else:

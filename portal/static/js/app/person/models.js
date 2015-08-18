@@ -204,12 +204,13 @@ App.Contact.reopenClass({
         });
     },
 
-    team_members: function(selectedTeamIds, selectedGroupIds) {
+    team_members: function(selectedTeamIds, selectedGroupIds, selectedCategories) {
         return ajax(this.url + '/teams/selected', {
             type: 'POST',
             data: JSON.stringify({
                 selected_teams: selectedTeamIds,
-                selected_small_groups: selectedGroupIds
+                selected_small_groups: selectedGroupIds,
+                selected_categories: selectedCategories
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"

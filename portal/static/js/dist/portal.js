@@ -17,6 +17,8 @@ App.Router.map(function() {
 });
 
 ;App.ContactController = Ember.ObjectController.extend({
+    categoriesUnselected: [{name:'Department Coordinators'}, {name:'Elders'}, {name:'Life Leaders'}, {name:'Partner'}, {name:'Senior Management'}, {name:'Trustees'}],
+    categoriesSelected: [],
     contactIds: [],
     members: [],
     teamsUnselected: [],
@@ -39,12 +41,15 @@ App.Router.map(function() {
         var controller = this;
         var selectedTeamIds = [];
         var selectedGroupIds = [];
+        var selectedCategories = [];
 
-        // Sort the teams lists by name
+        // Sort the teams/categories lists by name
         var sorted = controller.get("teamsSelected").sortBy('Name');
         var sortedUn = controller.get("teamsUnselected").sortBy('Name');
+        var sortedCategories = controller.get("categoriesUnselected").sortBy('name');
         controller.set("teamsSelected", sorted);
         controller.set("teamsUnselected", sortedUn);
+        controller.set("categoriesUnselected", sortedCategories);
 
         controller.get("teamsSelected").forEach(function(t) {
             selectedTeamIds.push(t.Id);
@@ -52,10 +57,12 @@ App.Router.map(function() {
         controller.get("smallGroupsSelected").forEach(function(t) {
             selectedGroupIds.push(t.Id);
         });
+        controller.get("categoriesSelected").forEach(function(t) {
+            selectedCategories.push(t.name);
+        });
 
         // Fetch the members of the selected team and add to member list
-        App.Contact.team_members(sorted, sortedUn).then(function (data) {
-            console.log(data);
+        App.Contact.team_members(selectedTeamIds, selectedGroupIds, selectedCategories).then(function (data) {
             var members = [];
             data.members.forEach(function(m) {
                 if (m.Email) {
@@ -131,6 +138,39 @@ App.Router.map(function() {
 
             // Add the small group to the unselected groups list
             this.get("small_groups").pushObject(sg);
+
+            // Refresh the teams and membership list in the view
+            this.refreshTeamsView();
+        },
+
+        selectCategory: function(category) {
+            this.set("inProgress", true);
+
+            // Toggle the selection of the category
+            var index = this.get("categoriesSelected").indexOf(category);
+            if (index >= 0) {
+                // The category is already selected
+                return;
+            }
+
+            // Add the category to the list of selected teams
+            this.get("categoriesSelected").pushObject(category);
+
+            // Remove the category from the unselected category list
+            this.get("categoriesUnselected").removeObject(category);
+
+            // Refresh the teams and membership list in the view
+            this.refreshTeamsView();
+        },
+
+        deselectCategories: function(category) {
+            this.set("inProgress", true);
+
+            // Remove the category from the selected groups list
+            this.get("categoriesSelected").removeObject(category);
+
+            // Add the small group to the unselected groups list
+            this.get("categoriesUnselected").pushObject(category);
 
             // Refresh the teams and membership list in the view
             this.refreshTeamsView();
@@ -756,12 +796,13 @@ App.Contact.reopenClass({
         });
     },
 
-    team_members: function(selectedTeamIds, selectedGroupIds) {
+    team_members: function(selectedTeamIds, selectedGroupIds, selectedCategories) {
         return ajax(this.url + '/teams/selected', {
             type: 'POST',
             data: JSON.stringify({
                 selected_teams: selectedTeamIds,
-                selected_small_groups: selectedGroupIds
+                selected_small_groups: selectedGroupIds,
+                selected_categories: selectedCategories
             }),
             contentType: "application/json; charset=utf-8",
             dataType: "json"

@@ -12,6 +12,15 @@ FIELDS = """Id, Name, FirstName, LastName, Email, Contact_Type__c, HomePhone,
             Kids_Group__c, Child_Tag_Number__c, Family_Tag__c,
             Parent_Name__c"""
 
+CATEGORY_FIELDS = {
+    "Department Coordinators": "DepartmentCoordinator__c",
+    "Elders": "GovernanceElder__c",
+    "Life Leaders": "isKeyLeader__c",
+    "Partner": "Partner__c",
+    "Senior Management": "SeniorManagement__c",
+    "Trustees": "GovernanceTrustee__c",
+}
+
 
 class SFObject(object):
     def __init__(self):
@@ -612,6 +621,28 @@ class SFContact(SFObject):
                 "TeamName": t["Team__r"]["Name"],
             })
 
+        return members
+
+    def category_members(self, name):
+        """
+        Get the members of a category (boolean field).
+        """
+        soql = """
+            select Id, Name, Email, MobilePhone
+            from Contact
+            where %s = true
+        """ % CATEGORY_FIELDS[name]
+        groups = self.connection.query(soql)
+
+        members = []
+        for t in groups["records"]:
+            members.append({
+                "Id": t["Id"],
+                "Name": t["Name"],
+                "Email": t["Email"],
+                "Mobile": t["MobilePhone"],
+                "TeamName": name,
+            })
         return members
 
 
