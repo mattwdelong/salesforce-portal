@@ -1091,7 +1091,7 @@ App.TeamController = Ember.ArrayController.extend({
             controller.set("model", teams);
 
             // Fetch the members of the selected team and add to member list
-            App.Contact.team_members([team], []).then(function (data) {
+            App.Contact.team_members([team], [], []).then(function (data) {
                 controller.set("people", data.members.sortBy('Name'));
                 controller.set("inProgress", false);
             });
