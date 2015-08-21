@@ -21,30 +21,26 @@ App.ContactController = Ember.ObjectController.extend({
     refreshTeamsView: function() {
         // Get a list of team IDs of the selected teams
         var controller = this;
-        var selectedTeamIds = [];
-        var selectedGroupIds = [];
-        var selectedCategories = [];
+        //var selectedTeamIds = [];
+        //var selectedGroupIds = [];
+        //var selectedCategories = [];
 
-        // Sort the teams/categories lists by name
-        var sorted = controller.get("teamsSelected").sortBy('Name');
-        var sortedUn = controller.get("teamsUnselected").sortBy('Name');
-        var sortedCategories = controller.get("categoriesUnselected").sortBy('name');
-        controller.set("teamsSelected", sorted);
-        controller.set("teamsUnselected", sortedUn);
-        controller.set("categoriesUnselected", sortedCategories);
-
-        controller.get("teamsSelected").forEach(function(t) {
-            selectedTeamIds.push(t.Id);
-        });
-        controller.get("smallGroupsSelected").forEach(function(t) {
-            selectedGroupIds.push(t.Id);
-        });
-        controller.get("categoriesSelected").forEach(function(t) {
-            selectedCategories.push(t.name);
-        });
+        // Sort the teams/groups/categories lists by name
+        var sortedTeams = controller.get("teamsSelected").sortBy('Name');
+        var sortedTeamsUnsel = controller.get("teamsUnselected").sortBy('Name');
+        var sortedGroups = controller.get("smallGroupsSelected").sortBy('Name');
+        var sortedGroupsUnsel = controller.get("smallGroupsUnselected").sortBy('Name');
+        var sortedCategories = controller.get("categoriesSelected").sortBy('name');
+        var sortedCategoriesUnsel = controller.get("categoriesUnselected").sortBy('name');
+        controller.set("teamsSelected", sortedTeams);
+        controller.set("teamsUnselected", sortedTeamsUnsel);
+        controller.set("smallGroupsSelected", sortedGroups);
+        controller.set("smallGroupsUnselected", sortedGroupsUnsel);
+        controller.set("categoriesSelected", sortedCategories);
+        controller.set("categoriesUnselected", sortedCategoriesUnsel);
 
         // Fetch the members of the selected team and add to member list
-        App.Contact.team_members(selectedTeamIds, selectedGroupIds, selectedCategories).then(function (data) {
+        App.Contact.team_members(sortedTeams, sortedGroups, sortedCategories).then(function (data) {
             var members = [];
             data.members.forEach(function(m) {
                 if (m.Email) {

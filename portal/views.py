@@ -175,7 +175,7 @@ def api_team_members():
                 members[member["Id"]]["teams"] = [t]
 
     for t in categories:
-        category_members = sf.category_members(t)
+        category_members = sf.category_members(t["name"])
         for member in category_members:
             if member["Id"] in members:
                 members[member["Id"]]["teams"].append(t)
