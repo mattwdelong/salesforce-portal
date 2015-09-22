@@ -50,7 +50,6 @@ def api_person_get(contact_id):
     contact['team_serving'] = teams
     contact['core_teams'] = core_teams
     contact['team_permissions'] = team_permissions
-
     return jsonify(response="Success", person=contact)
 
 

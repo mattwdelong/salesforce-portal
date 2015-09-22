@@ -53,6 +53,7 @@ App.PersonRoute = Ember.Route.extend({
             this.transitionTo('person', 'me');
         }
         return App.Person.findById(params.Id).then( function(data) {
+            console.log(data.person);
             return data.person;
         });
     },
@@ -121,6 +122,7 @@ App.EventKidsworkRoute = Ember.Route.extend({
 App.TeamRoute = Ember.Route.extend({
     model: function(params) {
         return App.Team.all().then( function(data) {
+            console.log(data.teams);
             return data.teams;
         });
     },

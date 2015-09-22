@@ -82,6 +82,7 @@ class SFPerson(SFObject):
             session['user_id'])
         manageable_teams = [
             t["team_id"] for t in manageable_teams if t["access_manage"]]
+
         teams = self.person_team_serving(sf_id, manageable_teams)
         core_teams = self.person_core_team_serving(sf_id, manageable_teams)
 
@@ -206,11 +207,16 @@ class SFPerson(SFObject):
                 "access_contact": False,
                 "access_manage": False,
             }
+
+            if ts["Id"] in manageable_teams:
+                team["access_manage"] = True
+
             for ct in in_teams["records"]:
                 if ts["Id"] == ct["Team__r"]["Id"]:
                     team["in_team"] = True
                     if ct["Team__r"]["Id"] in manageable_teams:
                         team["access_manage"] = True
+
             team_list.append(team)
 
         return team_list
@@ -294,8 +300,8 @@ class SFPerson(SFObject):
         """
         team = {
             "in_team": True,
-            "access_contact": False,
-            "access_manage": False
+            #"access_contact": False,
+            #"access_manage": False
         }
 
         # Get the current team membership

@@ -1,0 +1,62 @@
+<h2 class="sub-heading">Team Management</h2>
+
+<div class="panel panel-default">
+    <div class="panel-heading"><h3 class="panel-title">Select the Groups to be Managed</h3></div>
+    <div class="panel-body">
+        <h4>Teams</h4>
+        {{#each team in model}}
+            {{#if team.is_team_serving}}
+                {{#if team.selected}}
+                    {{#if team.access_manage}}
+                        <button {{action 'selectTeam' team}} class="btn btn-primary">{{ team.team_name }}</button>
+                    {{/if}}
+                {{else}}
+                    {{#if team.access_manage}}
+                        <button {{action 'selectTeam' team}}>{{ team.team_name }}</button>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        {{/each}}
+        <hr />
+        <h4>Core Teams</h4>
+        {{#each team in model}}
+            {{#if team.is_core_team}}
+                {{#if team.selected}}
+                    {{#if team.access_manage}}
+                        <button {{action 'selectTeam' team}} class="btn btn-primary">{{ team.team_name }}</button>
+                    {{/if}}
+                {{else}}
+                    {{#if team.access_manage}}
+                        <button {{action 'selectTeam' team}}>{{team.team_name}}</button>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
+        {{/each}}
+    </div>
+</div>
+
+{{#if selectedTeam}}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{#if inProgress}}<img src="/static/images/ajax-loader.gif" /> {{/if}}People In {{selectedTeam.team_name}}</h3>
+        </div>
+        <div class="panel-body">
+            <div>
+                <table class="table">
+                    <tbody>
+                    {{#each p in people}}
+                        <tr>
+                            <td>{{#link-to 'person' p.Id}}{{p.Name}}{{/link-to}}</td>
+                            <td>{{p.Email}}</td>
+                            <td>{{p.Mobile}}</td>
+                            <td>
+                                <button {{action 'removeFromGroup' p selectedTeam}} class="btn btn-primary">Remove from Team <span class="glyphicon glyphicon-remove-circle"></span></button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{{/if}}
