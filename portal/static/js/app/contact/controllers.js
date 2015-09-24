@@ -1,5 +1,5 @@
 App.ContactController = Ember.ObjectController.extend({
-    categoriesUnselected: [{name:'Department Coordinators'}, {name:'Elders'}, {name:'Life Leaders'}, {name:'Partner'}, {name:'Senior Management'}, {name:'Trustees'}],
+    categoriesUnselected: [{name:'Department Coordinators'}, {name:'Elders'}, {name:'Senior Management'}, {name:'Trustees'}],
     categoriesSelected: [],
     contactIds: [],
     members: [],

@@ -3,11 +3,12 @@
 <div class="panel panel-default">
     <div class="panel-heading"><h3 class="panel-title">Select the Groups to be Contacted</h3></div>
     <div class="panel-body">
-        <h4>Categories</h4>
-        {{#each cat in categoriesUnselected}}
-            <button {{action 'selectCategory' cat}}>{{cat.name}}</button>
-        {{/each}}
-
+        {{#if isLeader or isAdmin}}
+            <h4>Categories</h4>
+            {{#each cat in categoriesUnselected}}
+                <button {{action 'selectCategory' cat}}>{{cat.name}}</button>
+            {{/each}}
+        {{/if}}
         <h4>Teams</h4>
         {{#each team in teamsUnselected}}
             {{#if team.is_team_serving}}
