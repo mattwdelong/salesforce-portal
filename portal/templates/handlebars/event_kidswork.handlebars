@@ -62,7 +62,7 @@
 
 <div class="col-xs-12 col-md-12 col-lg-12">
     <div class="panel panel-default">
-        <div class="panel-heading"><h3 class="panel-title">Primary ({{totalPrimary}})</h3></div>
+        <div class="panel-heading"><h3 class="panel-title">Spark ({{totalSpark}})</h3></div>
         <div class="panel-body">
             <div class="table-responsive">
                 <table class="results">
@@ -70,7 +70,7 @@
                         <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
                     </tr>
                     {{#each r in model.registrations}}
-                        {{#if r.isPrimary}}
+                        {{#if r.isSpark}}
                             <tr {{r.SignedOut}}>
                                 <td class="small"><button class="btn btn-default" {{action 'showPerson' r.PersonId}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
                                 <td>{{r.Name}}</td>
@@ -101,7 +101,7 @@
 
 <div class="col-xs-12 col-md-12 col-lg-12">
     <div class="panel panel-default">
-        <div class="panel-heading"><h3 class="panel-title">Pre school ({{totalPreschool}})</h3></div>
+        <div class="panel-heading"><h3 class="panel-title">Flash ({{totalFlash}})</h3></div>
         <div class="panel-body">
             <div class="table-responsive">
                 <table class="results">
@@ -109,7 +109,46 @@
                         <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
                     </tr>
                     {{#each r in model.registrations}}
-                        {{#if r.isPreschool}}
+                        {{#if r.isFlash}}
+                            <tr {{r.SignedOut}}>
+                                <td class="small"><button class="btn btn-default" {{action 'showPerson' r.PersonId}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
+                                <td>{{r.Name}}</td>
+                                <td>
+                                    {{#if r.SignedOut}}
+                                        <button {{action 'signIn' r}} class="signed-out btn-link">SIGNED OUT</button>
+                                    {{else}}
+                                        <button {{action 'signOut' r}} class="btn-link">SIGN OUT</button>
+                                    {{/if}}
+                                </td>
+                                <td class="cell-center">{{r.ChildTag}}</td>
+                                <td class="cell-center">{{r.FamilyTag}}</td>
+                                <td>
+                                    {{#if r.SignedOut}}
+                                        <button {{action 'remove' r}} class="signed-out btn-link">REMOVE FROM THIS EVENT</button>
+                                    {{else}}
+                                        <button {{action 'remove' r}} class="btn-link">REMOVE FROM THIS EVENT</button>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                        {{/if}}
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-xs-12 col-md-12 col-lg-12">
+    <div class="panel panel-default">
+        <div class="panel-heading"><h3 class="panel-title">Blaze ({{totalBlaze}})</h3></div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="results">
+                    <tr>
+                        <th class="small"></th><th>Name</th><th></th><th class="cell-center">Tag</th><th class="cell-center">Family Tag</th><th></th>
+                    </tr>
+                    {{#each r in model.registrations}}
+                        {{#if r.isBlaze}}
                             <tr {{r.SignedOut}}>
                                 <td class="small"><button class="btn btn-default" {{action 'showPerson' r.PersonId}}><span class="glyphicon glyphicon-info-sign"></span></button></td>
                                 <td>{{r.Name}}</td>

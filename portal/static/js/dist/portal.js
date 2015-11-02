@@ -326,12 +326,16 @@ App.EventKidsworkController = Ember.ObjectController.extend({
         });
     }.observes("registration_date"),
 
-    totalPrimary: function() {
-        return this.get('model.registrations').filterBy('isPrimary', true).length;
+    totalSpark: function() {
+        return this.get('model.registrations').filterBy('isSpark', true).length;
     }.property('registrations'),
 
-    totalPreschool: function() {
-        return this.get('model.registrations').filterBy('isPreschool', true).length;
+    totalFlash: function() {
+        return this.get('model.registrations').filterBy('isFlash', true).length;
+    }.property('registrations'),
+
+    totalBlaze: function() {
+        return this.get('model.registrations').filterBy('isBlaze', true).length;
     }.property('registrations'),
 
     findPeople: function() {

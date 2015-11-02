@@ -708,11 +708,14 @@ class SFEvent(SFObject):
                 'class="signed-out"' if r["Status__c"] == "Signed-Out" else "",
                 "Type": r["Contact__r"]["Contact_Type__c"],
                 "KidsGroup": r["Contact__r"]["Kids_Group__c"],
-                "isPrimary":
-                True if r["Contact__r"]["Kids_Group__c"] == "Primary"
+                "isSpark":
+                True if r["Contact__r"]["Kids_Group__c"] == "Spark"
                 else False,
-                "isPreschool":
-                True if r["Contact__r"]["Kids_Group__c"] == "Preschool"
+                "isFlash":
+                True if r["Contact__r"]["Kids_Group__c"] == "Flash"
+                else False,
+                "isBlaze":
+                True if r["Contact__r"]["Kids_Group__c"] == "Blaze"
                 else False,
                 "ChildTag": r["Contact__r"]["Child_Tag_Number__c"],
                 "FamilyTag": r["Contact__r"]["Family_Tag__c"],
