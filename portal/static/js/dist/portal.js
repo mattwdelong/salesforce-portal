@@ -917,7 +917,7 @@ App.Team.reopenClass({
 
 });
 ;function getPermissions(controller) {
-    App.Person.permissions().then(function(result) {
+    return App.Person.permissions().then(function(result) {
         controller.set('permissions', result.permissions);
 
         var isStandard = true;
@@ -929,18 +929,28 @@ App.Team.reopenClass({
                 isAdmin = true;
                 isLeader = true;
                 isStandard = false;
+                isEvents = true;
             } else if (controller.get("permissions").role=="Leader") {
                 isLeader = true;
                 isStandard = false;
+                isEvents = true;
+            } else if (controller.get("permissions").role=="Standard+Events") {
+                isLeader = false;
+                isStandard = true;
+                isEvents = true;
             } else if (controller.get("permissions").role=="Events") {
                 isEvents = true;
                 isStandard = false;
             }
         }
+        var isContactAllowed = (isStandard || isLeader || isAdmin);
+
         controller.set('isAdmin', isAdmin);
         controller.set('isLeader', isLeader);
         controller.set('isStandard', isStandard);
         controller.set('isEvents', isEvents);
+        controller.set('isContactAllowed', isContactAllowed);
+
     });
 }
 
@@ -962,7 +972,6 @@ App.PeopleRoute = Ember.Route.extend({
         // Run the search
         controller.findPeople();
     }
-
 });
 
 App.PersonRoute = Ember.Route.extend({
@@ -971,14 +980,13 @@ App.PersonRoute = Ember.Route.extend({
             this.transitionTo('person', 'me');
         }
         return App.Person.findById(params.Id).then( function(data) {
-            console.log(data.person);
             return data.person;
         });
     },
 
     setupController: function(controller, model) {
-        controller.set('content', model);
         getPermissions(controller);
+        controller.set('content', model);
     }
 });
 
@@ -991,10 +999,14 @@ App.ContactRoute = Ember.Route.extend({
 
     setupController: function(controller, model) {
         controller.set('content', model);
-        getPermissions(controller);
-        controller.reset();
+        getPermissions(controller).finally(function() {
+            if (controller.get('isStandard') || controller.get('isLeader') || controller.get('isAdmin')) {
+                controller.reset();
+            } else {
+                window.location = '#/';
+            }
+        });
     }
-
 });
 
 App.EventsRoute = Ember.Route.extend({
@@ -1005,8 +1017,13 @@ App.EventsRoute = Ember.Route.extend({
     },
 
     setupController: function(controller, model) {
-        controller.set('content', model);
-        getPermissions(controller);
+        getPermissions(controller).finally(function() {
+            if (!controller.get('isEvents')) {
+                window.location = '#/';
+            } else {
+                controller.set('content', model);
+            }
+        });
     }
 });
 
@@ -1018,9 +1035,14 @@ App.EventRoute = Ember.Route.extend({
     },
 
     setupController: function(controller, model) {
-        controller.set('content', model);
-        controller.findPeople();
-        getPermissions(controller);
+        getPermissions(controller).finally(function() {
+            if (!controller.get('isEvents')) {
+                window.location = '#/';
+            } else {
+                controller.set('content', model);
+                controller.findPeople();
+            }
+        });
     }
 });
 
@@ -1032,15 +1054,19 @@ App.EventKidsworkRoute = Ember.Route.extend({
     },
 
     setupController: function(controller, model) {
-        controller.set('content', model);
-        getPermissions(controller);
+        getPermissions(controller).finally(function() {
+            if (!controller.get('isEvents')) {
+                window.location = '#/';
+            } else {
+                controller.set('content', model);
+            }
+        });
     }
 });
 
 App.TeamRoute = Ember.Route.extend({
     model: function(params) {
         return App.Team.all().then( function(data) {
-            console.log(data.teams);
             return data.teams;
         });
     },

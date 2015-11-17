@@ -51,10 +51,10 @@
             {% if session.role == 'Admin' or session.manage_teams > 0 %}
             <li id="nav-team" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/team">Teams</a></li>
             {%  endif %}
-            {% if session.role in ['Standard','Admin','Leader'] %}
+            {% if session.role in ['Standard','Standard+Events','Admin','Leader'] %}
             <li id="nav-contact" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/contact">Contact</a></li>
             {% endif %}
-            {% if session.role in ['Events','Admin','Leader'] %}
+            {% if session.role in ['Events','Standard+Events','Admin','Leader'] %}
             <li id="nav-event" data-toggle="collapse" data-target=".nav-collapse"><a href="/home#/events">Events</a></li>
             {% endif %}
             <li data-toggle="collapse" data-target=".nav-collapse"><a href="https://accounts.google.com">{{ session.name }}</a></li>
@@ -63,6 +63,7 @@
       </div>
     </div>
 
+    {{ session.role }}
     <script src="/static/js/dist/vendor.js"></script>
     <script src="/static/js/dist/moment.min.js"></script>
     <script src="/static/js/dist/pikaday.min.js"></script>

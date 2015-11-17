@@ -24,7 +24,6 @@ module.exports = function(grunt) {
             },
             dist: {
                 files: {
-                  //'portal/static/js/dist/handlebars.min.js': ['portal/static/js/dist/handlebars-v1.3.0.js'],
                   'portal/static/js/dist/portal.min.js': ['portal/static/js/dist/portal.js'],
                   'portal/static/js/dist/pikaday.min.js': ['portal/static/js/dist/pikaday.js'],
                   'portal/static/js/dist/templates.min.js': ['portal/static/js/dist/templates.js']
