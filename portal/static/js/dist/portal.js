@@ -917,38 +917,38 @@ App.Team.reopenClass({
 
 });
 ;function getPermissions(controller) {
-    return App.Person.permissions().then(function(result) {
+    App.Person.permissions().then(function(result) {
         controller.set('permissions', result.permissions);
 
         var isStandard = true;
         var isAdmin = false;
         var isLeader = false;
         var isEvents = false;
+        var isStandardEvents = false;
         if (controller.get("permissions")) {
             if (controller.get("permissions").role=="Admin") {
                 isAdmin = true;
                 isLeader = true;
                 isStandard = false;
-                isEvents = true;
             } else if (controller.get("permissions").role=="Leader") {
                 isLeader = true;
                 isStandard = false;
-                isEvents = true;
             } else if (controller.get("permissions").role=="Standard+Events") {
                 isLeader = false;
                 isStandard = true;
-                isEvents = true;
+                isStandardEvents = true;
             } else if (controller.get("permissions").role=="Events") {
                 isEvents = true;
                 isStandard = false;
             }
         }
-        var isContactAllowed = (isStandard || isLeader || isAdmin);
+        var isContactAllowed = (isStandard || isLeader || isAdmin || isStandardEvents);
 
         controller.set('isAdmin', isAdmin);
         controller.set('isLeader', isLeader);
         controller.set('isStandard', isStandard);
         controller.set('isEvents', isEvents);
+        controller.set('isStandardEvents', isStandardEvents);
         controller.set('isContactAllowed', isContactAllowed);
 
     });
@@ -966,8 +966,9 @@ App.PeopleRoute = Ember.Route.extend({
     },
 
     setupController: function(controller, model) {
-        controller.set('content', model);
         getPermissions(controller);
+        controller.set('content', model);
+
 
         // Run the search
         controller.findPeople();
@@ -999,13 +1000,8 @@ App.ContactRoute = Ember.Route.extend({
 
     setupController: function(controller, model) {
         controller.set('content', model);
-        getPermissions(controller).finally(function() {
-            if (controller.get('isStandard') || controller.get('isLeader') || controller.get('isAdmin')) {
-                controller.reset();
-            } else {
-                window.location = '#/';
-            }
-        });
+        getPermissions(controller);
+        controller.reset();
     }
 });
 
@@ -1017,13 +1013,8 @@ App.EventsRoute = Ember.Route.extend({
     },
 
     setupController: function(controller, model) {
-        getPermissions(controller).finally(function() {
-            if (!controller.get('isEvents')) {
-                window.location = '#/';
-            } else {
-                controller.set('content', model);
-            }
-        });
+        controller.set('content', model);
+        getPermissions(controller);
     }
 });
 
@@ -1035,14 +1026,9 @@ App.EventRoute = Ember.Route.extend({
     },
 
     setupController: function(controller, model) {
-        getPermissions(controller).finally(function() {
-            if (!controller.get('isEvents')) {
-                window.location = '#/';
-            } else {
-                controller.set('content', model);
-                controller.findPeople();
-            }
-        });
+        controller.set('content', model);
+        controller.findPeople();
+        getPermissions(controller);
     }
 });
 
@@ -1054,13 +1040,8 @@ App.EventKidsworkRoute = Ember.Route.extend({
     },
 
     setupController: function(controller, model) {
-        getPermissions(controller).finally(function() {
-            if (!controller.get('isEvents')) {
-                window.location = '#/';
-            } else {
-                controller.set('content', model);
-            }
-        });
+        controller.set('content', model);
+        getPermissions(controller);
     }
 });
 
