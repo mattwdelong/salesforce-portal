@@ -55,7 +55,7 @@ class SFPerson(SFObject):
 
     def find(self, name):
         """
-        Search for contacts by name.
+        Search for contacts by §.
         """
         soql = """
             select %s
@@ -63,7 +63,7 @@ class SFPerson(SFObject):
             where name like '%%%s%%'
             and Active__c = true
             order by lastName, firstName
-        """ % (FIELDS, name)
+        """ % (FIELDS, name.replace("'", "\\'"))
         results = self.connection.query(soql)
         return results
 
@@ -729,7 +729,7 @@ class SFEvent(SFObject):
         Search for person by name or family tag.
         """
         if name:
-            condition = "and name like '%%%s%%'" % name
+            condition = "and name like '%%%s%%'" % name.replace("'", "\\'")
         elif not name and not tag:
             condition = ""
         else:
